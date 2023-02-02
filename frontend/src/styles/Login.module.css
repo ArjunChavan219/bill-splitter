@@ -1,0 +1,68 @@
+.InputParentDiv {
+    display: block;
+    width: fit-content;
+    margin-left: 75px;
+    margin-right: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.LabelDiv {
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    margin-right: 25px;
+    padding: 5px;
+    font-size: large;
+}
+
+.InputDiv {
+    display: inline-block;
+    text-align: center;
+    width: 200px;
+    padding: 5px;
+}
+
+.Input {
+    font-size: medium;
+    padding: 5px;
+}
+
+.ErrorDiv {
+    display: inline-block;
+    text-align: center;
+    color: red;
+    width: 200px;
+    margin-right: 25px;
+    margin-left: 25px;
+    padding: 5px;
+    font-size: large;
+}
+
+.ButtonDiv {
+    text-align: center;
+    display: block;
+    width: 345px;
+    margin-left: 75px;
+    margin-top: 25px;
+    padding: 5px;
+}
+
+.Button {
+    border: 1px solid black;
+    font-size: medium;
+    padding: 5px;
+    margin: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.Tmp {
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+    border: 1px solid black;
+    padding-left: 75px;
+    padding-right: 25px;
+}
