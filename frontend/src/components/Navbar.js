@@ -31,7 +31,6 @@ function Navbar() {
                 <NavLink to="/about" style={style}>About</NavLink>
             </AuthCheck>
             {user.username && <NavLink to="/profile" style={style}>Profile</NavLink>}
-            {!user.username && <NavLink to="/login" style={style}>Login</NavLink>}
             <AuthCheck permissions={[PERMISSIONS.CAN_VIEW_EXTRA]}>
                 <NavLink to="/extra" style={style}>Extra</NavLink>
             </AuthCheck>

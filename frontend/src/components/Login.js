@@ -57,22 +57,18 @@ const Login = () => {
         const username = event.currentTarget.elements.usernameInput.value
         const password = event.currentTarget.elements.passwordInput.value
         
-        server.login(username, password).then(
-			data => {
-                if (data.success) {
-                    login(username)
-                    setError("")
-                } else {
-                    setError(data.error)
-                }
-			}
-		)
+        server.login(username, password).then(data => {
+            if (data.success) {
+                login(username)
+                setError("")
+            } else {
+                setError(data.error)
+            }
+        })
     }
 
     return (
         <>
-            <h1>Login Page</h1>
-
             <form id="login" onSubmit={handleLogin}>
                 <Input text="Username" type="text" error={error}/>
                 <Input text="Password" type="password" error={error}/>

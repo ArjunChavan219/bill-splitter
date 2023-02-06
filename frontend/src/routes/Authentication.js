@@ -8,7 +8,7 @@ const Authentication = ({ children }) => {
     const { user } = useAuth()
     const location = useLocation()
     if (!user.username) {
-        return <Navigate to="/login" state={{ path: location.pathname }} />
+        return <Navigate to="/" state={{ path: location.pathname }} />
     }
     return children
 }
