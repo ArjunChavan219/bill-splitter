@@ -9,7 +9,6 @@ import { useAuth } from "../provider/AuthProvider"
 function Input({ text, error }) {
     const type = text === "Username" ? "text" : "password"
     const ac = text === "Username" ?  "username" : "current-password"
-    const id = text === "Username" ?  "usernameInput" : "passwordInput"
 
     let errorContent = (<></>)
     if (error !== 0 && error === text) {
@@ -24,7 +23,7 @@ function Input({ text, error }) {
                     <label>{text}</label>
                 </div>
                 <div className={styles.InputDiv}>
-                    <input id={id} type={type} className={styles.Input} autoComplete={ac}/>
+                    <input type={type} className={styles.Input} autoComplete={ac}/>
                 </div>
                 {errorContent}
             </div>
@@ -49,7 +48,7 @@ const Login = () => {
     const { user, login, server } = useAuth()
 
     if (user.username) {
-        return <Navigate to="/profile" replace />
+        return <Navigate to="/user" replace />
     }
 
     function handleLogin(event) {

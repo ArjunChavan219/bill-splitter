@@ -27,15 +27,43 @@ export default class Server {
 		)
     }
 
-    async permission(username) {
+    async changePassword(password) {
+
         const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-                "username": username
+                "username": this.user.username,
+                "password": password
+            })
+		}
+		return fetch(`${this.url}/password`, requestOptions).then(
+			res => res.json()
+		)
+    }
+
+    async permission() {
+        const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+                "username": this.user.username
             })
 		}
 		return fetch(`${this.url}/permission`, requestOptions).then(
+			res => res.json()
+		)
+    }
+
+    async getUserData() {
+        const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+                "username": this.user.username
+            })
+		}
+		return fetch(`${this.url}/user`, requestOptions).then(
 			res => res.json()
 		)
     }

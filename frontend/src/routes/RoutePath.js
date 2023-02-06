@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom"
 import About from "../components/About"
 import Extra from "../components/Extra"
 import Home from "../components/Home"
-import Profile from "../components/Profile"
+import User from "../components/User"
 
 import Authentication from "./Authentication"
 import Authorization from "./Authorization"
@@ -19,9 +19,9 @@ function RoutePath() {
             <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}>
                 <Route path="about" element={<About />} />
             </Route>
-            <Route path="profile" element={
+            <Route path="user" element={
                 <Authentication>
-                    <Profile />
+                    <User />
                 </Authentication>
             } />
             <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_EXTRA]} />}>

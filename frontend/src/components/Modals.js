@@ -2,13 +2,14 @@ import { useState } from "react"
 import Modal from "react-modal"
 
 import Login from "./Login"
+import Password from "./Password"
 
 
 function MainModal({ content, children }) {
     const [modalIsOpen, setIsOpen] = useState(false)
     const modalStyle = {
         content: {
-            top: '30%',
+            top: '50%',
             left: '50%',
             right: 'auto',
             bottom: 'auto',
@@ -34,7 +35,7 @@ function MainModal({ content, children }) {
     )
 }
 
-function LoginDiv({ modalIsOpen, closeModal }) {
+function LoginDiv() {
 
     return (
         <>
@@ -46,7 +47,7 @@ function LoginDiv({ modalIsOpen, closeModal }) {
     )
 }
 
-function SignUp({ modalIsOpen, closeModal }) {
+function SignUp() {
 
     return (
         <>
@@ -57,6 +58,37 @@ function SignUp({ modalIsOpen, closeModal }) {
     )
 }
 
+function ChangePassword({ password }) {
+    const [modalIsOpen, setIsOpen] = useState(false)
+    const modalStyle = {
+        content: {
+            top: '40%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            transform: 'translate(-50%, -50%)'
+        }
+    }
+
+    function openModal() {
+        setIsOpen(true)
+    }
+
+    function closeModal() {
+        setIsOpen(false)
+    }
+
+    return (
+        <>
+            <button onClick={openModal}>Change Password</button>
+            <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={modalStyle}>
+                <div>This is the Change Password Modal</div>
+                <Password password={password} onRequestClose={closeModal}/>
+            </Modal>
+        </>
+    )
+}
+
 Modal.setAppElement("#root")
 
-export { SignUp, LoginDiv }
+export { SignUp, LoginDiv, ChangePassword }

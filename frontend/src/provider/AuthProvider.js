@@ -9,7 +9,7 @@ const AuthContext = createContext(null)
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const redirectPath = location.state?.path || "/profile"
+    const redirectPath = location.state?.path || "/user"
     const userState = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
         username: "",
         permissions: []
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     const server = new Server(user, handlePageChange)
 
     const login = (user) => {
-        server.permission(user).then(data => {
+        server.permission().then(data => {
             if (data.userGroup === "admin") {
                 setUser({ username: user, permissions: ["view_extra", "view_about"] })
             } else {

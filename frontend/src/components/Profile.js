@@ -1,20 +1,25 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 import { useAuth } from "../provider/AuthProvider"
+import { ChangePassword } from "./Modals"
 
 
 const Profile = () => {
-    const { user, logout } = useAuth()
-    const logoutHandler = () => {
-        logout()
-    }
+    const { user, server } = useAuth()
+    const [userData, setUserData] = useState({})
+
+    useEffect(() => {
+        server.getUserData().then(data => {
+            setUserData(data)
+        })
+    }, [])    
 
     return (
         <>
-            <h1>Welcome {user.username}</h1>
-            <button type="submit" onClick={logoutHandler}>
-                Logout
-            </button>
+            <div>Profile</div>
+            <div>Name: {userData.firstName} {userData.lastName} <button>Edit</button></div>
+            <div>Username:&nbsp;{user.username}&nbsp;<button>Edit</button></div>
+            <ChangePassword password={userData.password}/>
         </>
     )
 }
