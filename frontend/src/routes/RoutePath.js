@@ -2,6 +2,7 @@ import React from "react"
 import { Routes, Route } from "react-router-dom"
 
 import About from "../components/About"
+import Bill from "../components/Bill"
 import Extra from "../components/Extra"
 import Home from "../components/Home"
 import User from "../components/User"
@@ -22,6 +23,11 @@ function RoutePath() {
             <Route path="user" element={
                 <Authentication>
                     <User />
+                </Authentication>
+            } />
+            <Route path="bill" element={
+                <Authentication>
+                    <Bill />
                 </Authentication>
             } />
             <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_EXTRA]} />}>

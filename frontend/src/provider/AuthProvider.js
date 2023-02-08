@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     const server = new Server(user, handlePageChange)
 
     const login = (user) => {
-        server.permission().then(data => {
+        server.permission(user).then(data => {
             if (data.userGroup === "admin") {
                 setUser({ username: user, permissions: ["view_extra", "view_about"] })
             } else {

@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 import { Navigate } from "react-router-dom"
 
-import styles from "../styles/Login.module.css"
+import styles from "../../styles/Login.module.css"
 
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
 
 function Input({ text, error }) {
@@ -53,8 +53,8 @@ const Login = () => {
 
     function handleLogin(event) {
         event.preventDefault()
-        const username = event.currentTarget.elements.usernameInput.value
-        const password = event.currentTarget.elements.passwordInput.value
+        const username = event.target.elements[0].value
+        const password = event.target.elements[1].value
         
         server.login(username, password).then(data => {
             if (data.success) {

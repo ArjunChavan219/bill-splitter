@@ -1,9 +1,8 @@
 import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
 
-import styles from "../styles/Password.module.css"
+import styles from "../../styles/Password.module.css"
 
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
 
 function Input({ text, errorState, password, newPswdState }) {
