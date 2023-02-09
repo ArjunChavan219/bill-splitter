@@ -10,13 +10,17 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
     let billName, userValues, setUserValues;
     if (type === "bills") {
         userValues = userValueState
+    } else if (type === "users") {
+        [billName, userValues] = userValueState
     } else {
         [billName, userValues, setUserValues] = userValueState
     }
 
     useEffect(() => {
-        
-        if (add) {
+        if (type === "users" || !add) {
+            setValues(userValues)
+            setValueChecked(new Array(userValues.length).fill(false))
+        } else {
             if (type === "bills") {
                 server.getBills().then(data => {
                     setValues(data.bills.filter(bill => !userValues.includes(bill)))
@@ -29,9 +33,6 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                     setValueChecked(new Array(data.items.length).fill(false))
                 })
             }
-        } else {
-            setValues(userValues)
-            setValueChecked(new Array(userValues.length).fill(false))
         }
     }, [])
 
@@ -41,7 +42,12 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
 
     function handleAdd() {
         const selectedValues = values.filter((value, itr) => valueChecked[itr])
-        if (type === "bills") {
+        if (type === "users") {
+            server.unlockBill(billName, selectedValues).then(data => {
+                onRequestClose()
+                updateWindow()
+            })
+        } else if (type === "bills") {
             if (add) {
                 server.addUserBills(selectedValues).then(data => {
                     onRequestClose()
@@ -72,12 +78,12 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                     <div key={itr}>
                         <label>
                             <input type="checkbox" checked={valueChecked[itr]} onChange={() => handleChange(itr)} />
-                            {type === "bills" ? value : value["name"]}
+                            {type !== "items" ? value : value["name"]}
                         </label>
                     </div>
                 )
             })}
-            <button onClick={handleAdd}>{add ? "Add" : "Remove"}</button>
+            <button onClick={handleAdd}>{type === "users" ? "Request" : (add ? "Add" : "Remove")}</button>
         </>
     )
 }

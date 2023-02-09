@@ -67,7 +67,7 @@ def user_data():
 @app.route('/bills', methods=["GET"])
 def get_bills():
     return {
-        "bills": [bill["name"] for bill in bills.find({"status": "open"}, {"_id": False, "name": True})]
+        "bills": [bill["name"] for bill in bills.find({"status": {"$ne": "settled"}}, {"_id": False, "name": True})]
     }
 
 
@@ -134,6 +134,126 @@ def lock_user_bill():
                      {"$set": {"members.$.locked": True}})
     users.update_one({"username": username, "bills.name": bill_name},
                      {"$set": {"bills.$.locked": True}})
+    return {}
+
+
+@app.route('/all-bills', methods=["GET"])
+def get_all_bills():
+    all_bills = list(bills.find({}, {"_id": False, "name": True, "status": True, "members.locked": True}))
+    update_bills = []
+    for bill in all_bills:
+        bill["members"] = [member["locked"] for member in bill["members"]]
+        status = "open" if len(bill["members"]) == 0 else "ready" if all(bill["members"]) else "pending"
+        if bill["status"] != "settled" and bill["status"] != status:
+            bill["status"] = status
+            update_bills.append((bill["name"], status))
+        del bill["members"]
+
+    if len(update_bills) != 0:
+        bills.bulk_write([pymongo.UpdateOne({"name": entry[0]},
+                                            {"$set": {"status": entry[1]}}) for entry in update_bills])
+
+    return {
+        "bills": all_bills
+    }
+
+
+@app.route('/manage-bill', methods=["POST"])
+def manage_bill():
+    users_data = list(db.users.find({"bills.name": request.json["bill"]},
+                                    {"_id": False, "username": True, "bills.$": True}))
+    items_data: dict[str, dict[str, list]] = {}
+    bill_users = []
+
+    for user in users_data:
+        bill_users.append(user["username"])
+        for item in user["bills"][0]["items"]:
+            if item["name"] not in items_data:
+                items_data[item["name"]] = {"name": item["name"], "users": []}
+            items_data[item["name"]]["users"].append({
+                "username": user["username"],
+                "share": item["share"]
+            })
+
+    for item in items_data:
+        sharing = {}
+        specified = {}
+        total_share = 0
+        item_users = items_data[item]["users"]
+
+        for user in item_users:
+            if user["share"] == 0:
+                sharing[user["username"]] = None
+            else:
+                specified[user["username"]] = None
+                total_share += user["share"]
+
+        if len(sharing) == 0:
+            if total_share != 1:
+                change = (1 - total_share)/len(specified)
+                for user in item_users:
+                    if user["username"] in specified:
+                        user["share"] = round(user["share"] + change, 3)
+        else:
+            if total_share < 1:
+                change = (1 - total_share) / len(sharing)
+                for user in item_users:
+                    if user["username"] in sharing:
+                        user["share"] = round(change, 3)
+            else:
+                if total_share > 1:
+                    change = (1 - total_share) / len(specified)
+                    for user in item_users:
+                        if user["username"] in specified:
+                            user["share"] += change
+                change = 1/(len(specified)+len(sharing))
+
+                for user in item_users:
+                    if user["username"] in sharing:
+                        user["share"] = round(change, 3)
+                    else:
+                        user["share"] = round(user["share"] * change * len(specified), 3)
+    return {
+        "items": list(items_data.values()),
+        "users": bill_users
+    }
+
+
+@app.route('/unlock-bill', methods=["POST"])
+def unlock_bill():
+    users.update_many({"username": {"$in": request.json["users"]}, "bills.name": request.json["bill"]},
+                      {"$set": {"bills.$.locked": False}})
+    bills.update_one({"name": request.json["bill"]}, {"$set": {"members.$[elem].locked": False}},
+                     array_filters=[{"elem.username": {"$in": request.json["users"]}}])
+    return {}
+
+
+@app.route('/save-bill', methods=["POST"])
+def save_bill():
+    items_data = request.json["items"]
+    bill_data = list(bills.find({"name": request.json["bill"]}, {"_id": False, "items": True}))[0]["items"]
+    items = {item["name"]: item for item in bill_data}
+    user_items = {}
+    for item in items_data:
+        for user in item["users"]:
+            if user["username"] not in user_items:
+                user_items[user["username"]] = {"items": [], "amount": 0}
+            cost = round(items[item["name"]]["cost"] * user["share"], 3)
+            user_items[user["username"]]["items"].append({
+                "name": item["name"],
+                "quantity": items[item["name"]]["quantity"],
+                "type": items[item["name"]]["type"],
+                "share": user["share"],
+                "cost": cost
+            })
+            user_items[user["username"]]["amount"] += cost
+
+    bills.update_one({"name": request.json["bill"]}, {"$set": {"status": "settled"}})
+    users.bulk_write([pymongo.UpdateOne({"username": user, "bills.name": request.json["bill"]},
+                                        {"$set": {"bills.$.items": user_items[user]["items"],
+                                                  "bills.$.amount": user_items[user]["amount"]}})
+                      for user in user_items])
+
     return {}
 
 

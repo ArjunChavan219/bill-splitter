@@ -3,8 +3,9 @@ import { Routes, Route } from "react-router-dom"
 
 import About from "../components/About"
 import Bill from "../components/Bill"
-import Extra from "../components/Extra"
+import ManageBill from "../components/Calculate"
 import Home from "../components/Home"
+import Manage from "../components/Manage"
 import User from "../components/User"
 
 import Authentication from "./Authentication"
@@ -30,8 +31,9 @@ function RoutePath() {
                     <Bill />
                 </Authentication>
             } />
-            <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_EXTRA]} />}>
-                <Route path="extra" element={<Extra />} />
+            <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ADMIN]} />}>
+                <Route path="manage" element={<Manage />} />
+                <Route path="calculate" element={<ManageBill />} />
             </Route>
         </Routes>
     )

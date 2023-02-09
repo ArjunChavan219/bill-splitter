@@ -103,4 +103,30 @@ export default class Server {
             username: this.user.username
         })
     }
+
+    async getAllBills() {
+        return fetch(`${this.url}/all-bills`).then(
+			res => res.json()
+		)
+    }
+
+    async manageBill(bill) {
+        return this.request("manage-bill", "POST", {
+            bill: bill
+        })
+    }
+
+    async unlockBill(bill, users) {
+        return this.request("unlock-bill", "POST", {
+            bill: bill,
+            users: users
+        })
+    }
+
+    async saveBill(bill, items) {
+        return this.request("save-bill", "POST", {
+            bill: bill,
+            items: items
+        })
+    }
 }

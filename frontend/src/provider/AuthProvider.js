@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     const login = (user) => {
         server.permission(user).then(data => {
             if (data.userGroup === "admin") {
-                setUser({ username: user, permissions: ["view_extra", "view_about"] })
+                setUser({ username: user, permissions: ["view_admin", "view_about"] })
             } else {
                 setUser({ username: user, permissions: ["view_about"] })
             }

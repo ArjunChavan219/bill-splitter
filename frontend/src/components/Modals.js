@@ -151,7 +151,6 @@ function RemoveItem({ updateItems, userItems }) {
 
 function SaveBill({ saveItems }) {
     const modal = new ParentModal(saveItems)
-    modal.modalStyle.top = "50%"
     
     return (
         <>
@@ -163,6 +162,20 @@ function SaveBill({ saveItems }) {
     )
 }
 
+function UpdateUser({ closePage, userState }) {
+    const modal = new ParentModal()
+    modal.modalStyle.top = "40%"
+    
+    return (
+        <>
+            <MainModal object={modal} content="Request Changes">
+                <div>This is the Update User Modal</div>
+                <Checkbox type={"users"} updateWindow={closePage} onRequestClose={modal.closeModal} userValueState={userState}/>
+            </MainModal>
+        </>
+    )
+}
+
 Modal.setAppElement("#root")
 
-export { SignUp, LoginDiv, ChangePassword, AddBill, RemoveBill, AddItem, RemoveItem, SaveBill }
+export { SignUp, LoginDiv, ChangePassword, AddBill, RemoveBill, AddItem, RemoveItem, SaveBill, UpdateUser }
