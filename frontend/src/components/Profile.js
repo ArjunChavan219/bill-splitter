@@ -17,8 +17,8 @@ const Profile = () => {
     return (
         <>
             <div>Profile</div>
-            <div>Name: {userData.firstName} {userData.lastName} <button>Edit</button></div>
-            <div>Username:&nbsp;{user.username}&nbsp;<button>Edit</button></div>
+            <div>Name: {userData.firstName} {userData.lastName}</div>
+            <div>Username: {user.username}</div>
             <ChangePassword password={userData.password}/>
         </>
     )
