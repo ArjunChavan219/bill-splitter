@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { Link } from "react-router-dom"
 
 import { useAuth } from "../provider/AuthProvider"
@@ -10,7 +10,7 @@ function BillData({ data }) {
 
     if (data.amount === 0) {
         amount = "TBC"
-        status = data.locked ? "Locked" : "Editable"
+        status = data.locked ? "Locked" : (<Link to="/bill" state={data}>{"Edit"}</Link>)
     } else {
         amount = data.amount
         status = data.paid ? "Paid" : "Pending"
@@ -18,7 +18,7 @@ function BillData({ data }) {
 
     return (
         <tr>
-            <td>{data.locked ? data.name : (<Link to="/bill" state={data}>{data.name}</Link>)}</td>
+            <td>{data.name}</td>
             <td>{status}</td>
             <td>{amount}</td>
         </tr>
@@ -26,16 +26,7 @@ function BillData({ data }) {
 }
 
 
-const Bills = () => {
-    const { server } = useAuth()
-    const [userBills, setUserBills] = useState([])
-
-    function updateBills() {
-        server.getUserBills().then(data => {
-            setUserBills(data.bills)
-        })
-    }
-
+const Bills = ({ userBills, updateBills }) => {
     useEffect(() => {
         updateBills()
     }, [])
@@ -43,9 +34,7 @@ const Bills = () => {
     return (
         <>
             <div>Bills</div>
-            {userBills.length === 0 ? (<>
-                <div>You have no Bills in the account. Please add.</div>
-            </>) : (<>
+            {userBills.length !== 0 && (<>
                 <table><tbody>
                     <tr>
                         <th>Name</th>
@@ -53,7 +42,7 @@ const Bills = () => {
                         <th>Amount</th>
                     </tr>
                     {userBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
-                    </tbody></table>
+                </tbody></table>
             </>)}
             <AddBill updateBills={updateBills} userBills={userBills.map(bill => bill.name)}/>
             <RemoveBill updateBills={updateBills} userBills={userBills.filter(bill => !bill.locked).map(bill => bill.name)} />
