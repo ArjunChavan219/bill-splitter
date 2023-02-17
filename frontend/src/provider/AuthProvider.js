@@ -9,24 +9,12 @@ const AuthContext = createContext(null)
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const redirectPath = location.state?.path || "/profile"
+    const redirectPath = location.state?.path || "/user"
     const userState = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
         username: "",
         permissions: []
     }
     const [user, setUser] = useState(userState)
-
-    const login = (user) => {
-        if (user === "admin") {
-            setUser({ username: user, permissions: ["view_extra", "view_about"] })
-        } else {
-            setUser({ username: user, permissions: ["view_about"] })
-        }
-        navigate(redirectPath, { replace: true })
-    }
-    const logout = () => {
-        setUser({ username: "", permissions: [] })
-    }
 
     useEffect(() => {
         window.localStorage.setItem("USER_STATE", JSON.stringify(user))
@@ -44,6 +32,20 @@ export const AuthProvider = ({ children }) => {
     }, [location])
 
     const server = new Server(user, handlePageChange)
+
+    const login = (user) => {
+        server.permission(user).then(data => {
+            if (data.userGroup === "admin") {
+                setUser({ username: user, permissions: ["view_admin", "view_about"] })
+            } else {
+                setUser({ username: user, permissions: ["view_about"] })
+            }
+            navigate(redirectPath, { replace: true })
+        })
+    }
+    const logout = () => {
+        setUser({ username: "", permissions: [] })
+    }
 
     return (
         <AuthContext.Provider value={{ user, login, logout, server }}>

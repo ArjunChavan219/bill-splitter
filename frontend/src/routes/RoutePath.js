@@ -2,10 +2,11 @@ import React from "react"
 import { Routes, Route } from "react-router-dom"
 
 import About from "../components/About"
-import Extra from "../components/Extra"
+import Bill from "../components/Bill"
+import ManageBill from "../components/Calculate"
 import Home from "../components/Home"
-import Login from "../components/Login"
-import Profile from "../components/Profile"
+import Manage from "../components/Manage"
+import User from "../components/User"
 
 import Authentication from "./Authentication"
 import Authorization from "./Authorization"
@@ -20,15 +21,20 @@ function RoutePath() {
             <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}>
                 <Route path="about" element={<About />} />
             </Route>
-            <Route path="profile" element={
+            <Route path="user" element={
                 <Authentication>
-                    <Profile />
+                    <User />
                 </Authentication>
             } />
-            <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_EXTRA]} />}>
-                <Route path="extra" element={<Extra />} />
+            <Route path="bill" element={
+                <Authentication>
+                    <Bill />
+                </Authentication>
+            } />
+            <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ADMIN]} />}>
+                <Route path="manage" element={<Manage />} />
+                <Route path="calculate" element={<ManageBill />} />
             </Route>
-            <Route path="login" element={<Login />} />
         </Routes>
     )
 }
