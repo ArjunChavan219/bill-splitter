@@ -36,23 +36,21 @@ function Home() {
     }
 
     return (
-        <>
-            <div className={"container"}>
-                <div className={"top"}></div>
-                <div className={"bottom"}></div>
-                <div className={"center"}>
-                    <h2>Please Sign In</h2>
-                    <form id="login" onSubmit={handleLogin}>
-                        <input type="username" placeholder="Email" autoComplete="username" className={error === "Username" ? "error" : "normal"} onBlur={onExit}/>
-                        <input type="password" placeholder="Password" autoComplete="current-password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
-                        <button type="submit" className={"button"}>
-                            Login
-                        </button>
-                    </form>
-                    <h2>&nbsp;</h2>
-                </div>
+        <div className={"container"}>
+            <div className={"top"}></div>
+            <div className={"bottom"}></div>
+            <div className={"center"}>
+                <h2>Please Sign In</h2>
+                <form id="login" onSubmit={handleLogin}>
+                    <input type="username" placeholder="Email" autoComplete="username" className={error === "Username" ? "error" : "normal"} onBlur={onExit}/>
+                    <input type="password" placeholder="Password" autoComplete="current-password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
+                    <button type="submit" className={"button"}>
+                        Login
+                    </button>
+                </form>
+                <h2>&nbsp;</h2>
             </div>
-        </>
+        </div>
     )
 }
 

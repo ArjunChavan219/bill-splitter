@@ -1,27 +1,30 @@
 import React, { useEffect } from "react"
 import { Link } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
-import { AddBill, RemoveBill } from "./Modals"
-
 
 function BillData({ data }) {
-    let amount, status
+    let amount, nStatus, iStatus
+    const name = data.name.slice(0, -9)
+    const date = data.name.slice(-9)
 
     if (data.amount === 0) {
         amount = "TBC"
-        status = data.locked ? "Locked" : (<Link to="/bill" state={data}>{"Edit"}</Link>)
+        nStatus = data.locked ? "Locked" : "Edit"
+        iStatus = data.locked ? "fa-lock" : "fa-pencil-square-o"
     } else {
         amount = data.amount
-        status = data.paid ? "Paid" : "Pending"
+        nStatus = data.paid ? "Paid" : "Pending"
+        iStatus = data.paid ? "fa-check-circle-o" : "fa-credit-card"
     }
-
+    const status = (<><i className={`fa ${iStatus}`} aria-hidden="true" /> {nStatus}</>)
+    
     return (
-        <tr>
-            <td>{data.name}</td>
-            <td>{status}</td>
-            <td>{amount}</td>
-        </tr>
+        <li className="table-row">
+            <div className="col col-1">{nStatus === "Edit" ? (<Link to="/bill" state={data}>{status}</Link>) : status}</div>
+            <div className="col col-2">{name}</div>
+            <div className="col col-3">{date}</div>
+            <div className="col col-4">{amount}</div>
+      </li>
     )
 }
 
@@ -32,21 +35,22 @@ const Bills = ({ userBills, updateBills }) => {
     }, [])
 
     return (
-        <>
-            <div>Bills</div>
+        <div style={{marginBottom: "10px"}}>
             {userBills.length !== 0 && (<>
-                <table><tbody>
-                    <tr>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                    </tr>
-                    {userBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
-                </tbody></table>
+                <ul className="responsive-table">
+                    <li className="table-header">
+                        <div className="col col-1">Status</div>
+                        <div className="col col-2">Name</div>
+                        <div className="col col-3">Date</div>
+                        <div className="col col-4">Amount</div>
+                    </li>
+                    <div className="children">
+                        {userBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
+                    </div>
+                </ul>
             </>)}
-            <AddBill updateBills={updateBills} userBills={userBills.map(bill => bill.name)}/>
-            <RemoveBill updateBills={updateBills} userBills={userBills.filter(bill => !bill.locked).map(bill => bill.name)} />
-        </>
+            
+        </div>
     )
 }
 

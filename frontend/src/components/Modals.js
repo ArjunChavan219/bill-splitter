@@ -13,7 +13,8 @@ class ParentModal {
                 left: '50%',
                 right: 'auto',
                 bottom: 'auto',
-                transform: 'translate(-50%, -50%)'
+                transform: 'translate(-50%, -50%)',
+                width: 'fit-content'
             }
         }
         const [modalIsOpen, setIsOpen] = useState(false)
@@ -33,10 +34,10 @@ class ParentModal {
     }
 }
 
-function MainModal({ object, content, children }) {
+function MainModal({ object, buttonClass, content, children }) {
     return (
         <>
-            <button onClick={object.openModal}>{content}</button>
+            <button onClick={object.openModal} className={`manage-button ${buttonClass}`}><span>{content}</span></button>
             <Modal isOpen={object.modalIsOpen} onRequestClose={object.closeModal} style={object.modalStyle}>
                 {children}
             </Modal>
@@ -89,8 +90,8 @@ function AddBill({ updateBills, userBills }) {
 
     return (
         <>
-            <MainModal object={modal} content="Add Bills">
-                <div>This is the Add Bill Modal</div>
+            <MainModal object={modal} buttonClass="add-button" content="Add">
+                <h3>Select Bills to be Added:</h3>
                 <Checkbox type={"bills"} updateWindow={updateBills} onRequestClose={modal.closeModal} userValueState={userBills} add={true}/>
             </MainModal>
         </>
@@ -103,7 +104,7 @@ function RemoveBill({ updateBills, userBills }) {
 
     return (
         <>
-            <MainModal object={modal} content="Remove Bills">
+            <MainModal object={modal} buttonClass="remove-button" content="Remove">
                 <div>This is the Remove Bill Modal</div>
                 {userBills.length === 0 ? (
                         <div>No active bills</div>
