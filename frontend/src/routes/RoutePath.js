@@ -7,7 +7,7 @@ import ManageBill from "../components/Calculate"
 import Home from "../components/Home"
 import Manage from "../components/Manage"
 import PageNotFound from "../components/PageNotFound"
-import User from "../components/User"
+import Dashboard from "../components/Dashboard"
 
 import Authentication from "./Authentication"
 import Authorization from "./Authorization"
@@ -22,9 +22,9 @@ function RoutePath() {
             {/* <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}>
                 <Route path="about" element={<About />} />
             </Route> */}
-            <Route path="user" element={
+            <Route path="dashboard" element={
                 <Authentication>
-                    <User />
+                    <Dashboard />
                 </Authentication>
             } />
             <Route path="bill" element={

@@ -30,7 +30,7 @@ function Navbar() {
             <AuthCheck permissions={[PERMISSIONS.CAN_VIEW_ABOUT]}>
                 <NavLink to="/about" style={style}>About</NavLink>
             </AuthCheck>
-            {user.username && <NavLink to="/user" style={style}>User Page</NavLink>}
+            {user.username && <NavLink to="/dashboard" style={style}>User Page</NavLink>}
             <AuthCheck permissions={[PERMISSIONS.CAN_VIEW_ADMIN]}>
                 <NavLink to="/manage" style={style}>Manage</NavLink>
             </AuthCheck>

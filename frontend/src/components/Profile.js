@@ -19,7 +19,7 @@ const Profile = () => {
             <div>Profile</div>
             <div>Name: {userData.firstName} {userData.lastName}</div>
             <div>Username: {user.username}</div>
-            <ChangePassword password={userData.password}/>
+            {/* <ChangePassword password={userData.password}/> */}
         </>
     )
 }

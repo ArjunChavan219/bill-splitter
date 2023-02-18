@@ -7,7 +7,7 @@ import Profile from "./Profile"
 
 
 
-const User = () => {
+const Dashboard = () => {
     const { user, logout, server } = useAuth()
     const [userBills, setUserBills] = useState([])
 
@@ -37,4 +37,4 @@ const User = () => {
     )
 }
 
-export default User
+export default Dashboard
