@@ -43,7 +43,7 @@ function Home() {
                 <h2>Please Sign In</h2>
                 <form id="login" onSubmit={handleLogin}>
                     <input type="username" placeholder="Email" autoComplete="username" className={error === "Username" ? "error" : "normal"} onBlur={onExit}/>
-                    <input type="password" placeholder="Password" autoComplete="current-password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
+                    <input type="password" placeholder="Password" autoComplete="password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
                     <button type="submit" className={"button"}>
                         Login
                     </button>
