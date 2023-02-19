@@ -14,7 +14,7 @@ const Authorization = ({ permissions }) => {
         return isAllowed ? <Outlet /> : <Unauthorized />
     }
 
-    return <Navigate to="/" state={{ path: "/dashboard" }} replace />
+    return <Navigate to="/" state={{ path: "/user" }} replace />
 }
 
 export default Authorization

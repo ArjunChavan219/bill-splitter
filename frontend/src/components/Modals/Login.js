@@ -48,7 +48,7 @@ const Login = () => {
     const { user, login, server } = useAuth()
 
     if (user.username) {
-        return <Navigate to="/dashboard" replace />
+        return <Navigate to="/user" replace />
     }
 
     function handleLogin(event) {

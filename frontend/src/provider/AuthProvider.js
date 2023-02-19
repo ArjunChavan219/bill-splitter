@@ -9,7 +9,7 @@ const AuthContext = createContext(null)
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const redirectPath = location.state?.path || "/dashboard"
+    const redirectPath = location.state?.path || "/user"
     const userState = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
         username: "",
         permissions: []

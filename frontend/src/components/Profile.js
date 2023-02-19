@@ -20,7 +20,7 @@ const Profile = () => {
 
     return (
         <div className={"flex items-center h-20 px-6 sm:px-10 bg-white"}>
-            <a href="/dashboard"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></a>
+            <a href="/user"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></a>
             <div className={"flex flex-shrink-0 items-center ml-auto"}>
                 <span className={"font-semibold"}>{userData.firstName} {userData.lastName}</span>
                 <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>

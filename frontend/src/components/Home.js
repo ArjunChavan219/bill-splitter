@@ -12,7 +12,7 @@ function Home() {
 
     useEffect(() => {
         if (user.username) {
-            navigate("/dashboard", { replace: true })
+            navigate("/user", { replace: true })
         }
     }, [])
 

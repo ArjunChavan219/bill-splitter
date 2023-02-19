@@ -20,7 +20,7 @@ function BillData({ data }) {
     
     return (
         <li className="table-row">
-            <div className="col col-1">{nStatus === "Edit" ? (<Link to="/bill" state={data}>{status}</Link>) : status}</div>
+            <div className="col col-1">{nStatus === "Edit" ? (<Link to="/user/bill" state={data}>{status}</Link>) : status}</div>
             <div className="col col-2">{name}</div>
             <div className="col col-3">{date}</div>
             <div className="col col-4">{amount}</div>
