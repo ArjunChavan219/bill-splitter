@@ -7,7 +7,7 @@ import { useAuth } from "../provider/AuthProvider"
 function BillData({ data }) {
     return (
         <tr>
-            <td>{data.status === "ready" ? (<Link to="/calculate" state={data}>{data.name}</Link>) : data.name}</td>
+            <td>{data.status === "ready" ? (<Link to="/manage-bill" state={data}>{data.name}</Link>) : data.name}</td>
             <td>{data.status}</td>
         </tr>
     )

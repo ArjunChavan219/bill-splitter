@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom"
 
 import About from "../components/About"
 import Bill from "../components/Bill"
-import ManageBill from "../components/Calculate"
+import ManageBill from "../components/ManageBill"
 import Home from "../components/Home"
 import Manage from "../components/Manage"
 import PageNotFound from "../components/PageNotFound"
@@ -32,7 +32,7 @@ function RoutePath() {
                     <Route path="bill" element={<Bill />} />
                     <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ADMIN]} />}>
                         <Route path="manage" element={<Manage />} />
-                        <Route path="calculate" element={<ManageBill />} />
+                        <Route path="manage-bill" element={<ManageBill />} />
                     </Route>
                 </Route>
             <Route path="*" element={<PageNotFound />} />
