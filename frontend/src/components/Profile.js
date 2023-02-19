@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react"
 import { useAuth } from "../provider/AuthProvider"
 import { ChangePassword } from "./Modals"
 
+const logo = String(require("../assets/blank_profile.png"))
+
 
 const Profile = () => {
     const { logout, server } = useAuth()
@@ -24,7 +26,7 @@ const Profile = () => {
             <div className={"flex flex-shrink-0 items-center ml-auto"}>
                 <span className={"font-semibold"}>{userData.firstName} {userData.lastName}</span>
                 <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>
-                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="user profile photo" className={"h-full w-full object-cover"}/>
+                    <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
                 </span>
                 <div className={"border-l pl-3 ml-3 space-x-1"}>
                     <button className={"relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 focus:text-gray-600 rounded-full"} onClick={logoutHandler}>
