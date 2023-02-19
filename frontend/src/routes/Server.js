@@ -13,7 +13,18 @@ export default class Server {
         return JSON.stringify(current_user) !== JSON.stringify(this.user)
     }
 
-    async request(url, method, body) {
+    async getRequest(url, params) {
+        let request = this.url + "/" + url
+        if (params) {
+            request +=  "?" +new URLSearchParams(params)
+        }
+
+        return fetch(request).then(
+			res => res.json()
+		)
+    }
+
+    async postRequest(url, method, body) {
         const requestOptions = {
 			method: method,
 			headers: { 'Content-Type': 'application/json' },
@@ -25,72 +36,70 @@ export default class Server {
     }
 
     async login(username, password) {
-        return this.request("login", "POST", {
+        return this.getRequest("login", {
             username: username,
             password: password
         })
     }
 
     async changePassword(password) {
-        return this.request("password", "POST", {
+        return this.postRequest("password", "POST", {
             username: this.user.username,
             password: password
         })
     }
 
     async permission(user) {
-        return this.request("permission", "POST", {
+        return this.getRequest("permission", {
             username: user
         })
     }
 
     async getUserData() {
-        return this.request("user", "POST", {
+        return this.getRequest("user", {
             username: this.user.username
         })
     }
 
     async getBills() {
-        return fetch(`${this.url}/bills`).then(
-			res => res.json()
-		)
+        return this.getRequest("bills")
     }
 
     async getBill(bill) {
-        return this.request("bill", "POST", {
+        return this.getRequest("bill", {
             bill: bill
         })
     }
 
     async getUserBills() {
-        return this.request("user-bills", "POST", {
+        return this.getRequest("user-bills", {
             username: this.user.username 
         })
     }
 
     async getUserBill(bill) {
-        return this.request("user-bill", "POST", {
+        return this.getRequest("user-bill", {
             bill: bill,
             username: this.user.username 
         })
     }
 
     async addUserBills(bills) {
-        return this.request("add-user-bills", "POST", {
+        return this.postRequest("add-user-bills", "POST", {
             username: this.user.username,
             bills: bills
         })
     }
 
     async removeUserBills(bills) {
-        return this.request("remove-user-bills", "POST", {
+        return this.postRequest("remove-user-bills", "POST", {
             username: this.user.username,
             bills: bills
         })
     }
 
     async updateUserBill(bill, items) {
-        return this.request("update-user-bill", "POST", {
+        return this.postRequest("update-user-bill", "POST", {
             bill: bill,
             username: this.user.username,
             items: items
@@ -98,33 +107,31 @@ export default class Server {
     }
 
     async lockUserBill(bill) {
-        return this.request("lock-user-bill", "POST", {
+        return this.postRequest("lock-user-bill", "POST", {
             bill: bill,
             username: this.user.username
         })
     }
 
-    async getAllBills() {
-        return fetch(`${this.url}/all-bills`).then(
-			res => res.json()
-		)
-    }
-
-    async manageBill(bill) {
-        return this.request("manage-bill", "POST", {
-            bill: bill
-        })
-    }
-
     async unlockBill(bill, users) {
-        return this.request("unlock-bill", "POST", {
+        return this.postRequest("unlock-bill", "POST", {
             bill: bill,
             users: users
         })
     }
 
+    async getAllBills() {
+        return this.postRequest("all-bills")
+    }
+
+    async manageBill(bill) {
+        return this.getRequest("manage-bill", {
+            bill: bill
+        })
+    }
+
     async saveBill(bill, items) {
-        return this.request("save-bill", "POST", {
+        return this.postRequest("save-bill", "POST", {
             bill: bill,
             items: items
         })
