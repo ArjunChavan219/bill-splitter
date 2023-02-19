@@ -6,33 +6,50 @@ export default class Server {
     }
 
     session_check() {
-        const current_user = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
+        const current_user = JSON.parse(window.sessionStorage?.getItem("USER_STATE")) || {
             username: "",
             permissions: []
         }
         return JSON.stringify(current_user) !== JSON.stringify(this.user)
     }
 
-    async getRequest(url, params) {
-        let request = this.url + "/" + url
-        if (params) {
-            request +=  "?" +new URLSearchParams(params)
+    async getRequest(endpoint, params) {
+        const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
+        const cacheKey = `${endpoint}`
+
+        const cacheResponse = window.sessionStorage?.getItem(cacheKey)
+        if (cacheResponse) {
+            return JSON.parse(cacheResponse)
         }
 
         return fetch(request).then(
 			res => res.json()
-		)
+		).then(data => {
+            window.sessionStorage.setItem(cacheKey, JSON.stringify(data))
+            return data
+        })
     }
 
-    async postRequest(url, method, body) {
+    async postRequest(endpoint, method, body) {
         const requestOptions = {
 			method: method,
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(body)
 		}
-		return fetch(`${this.url}/${url}`, requestOptions).then(
-			res => res.json()
-		)
+		return fetch(`${this.url}/${endpoint}`, requestOptions).then(res => {
+            if (endpoint === "password") {
+                window.sessionStorage.removeItem("login")
+            } else if (endpoint === "update-user-bill") {
+                window.sessionStorage.removeItem("user-bill")
+            } else {
+                window.sessionStorage.removeItem("user-bills")
+                window.sessionStorage.removeItem("all-bills")
+            }
+            if (endpoint === "unlock-bill") {
+                window.sessionStorage.removeItem("manage-bill")
+            }
+            return res.json()
+        })
     }
 
     async login(username, password) {
@@ -121,7 +138,7 @@ export default class Server {
     }
 
     async getAllBills() {
-        return this.postRequest("all-bills")
+        return this.getRequest("all-bills")
     }
 
     async manageBill(bill) {
