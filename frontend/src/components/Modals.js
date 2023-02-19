@@ -91,7 +91,6 @@ function AddBill({ updateBills, userBills }) {
     return (
         <>
             <MainModal object={modal} buttonClass="add-button" content="Add">
-                <h3>Select Bills to be Added:</h3>
                 <Checkbox type={"bills"} updateWindow={updateBills} onRequestClose={modal.closeModal} userValueState={userBills} add={true}/>
             </MainModal>
         </>
@@ -105,7 +104,6 @@ function RemoveBill({ updateBills, userBills }) {
     return (
         <>
             <MainModal object={modal} buttonClass="remove-button" content="Remove">
-                <div>This is the Remove Bill Modal</div>
                 {userBills.length === 0 ? (
                         <div>No active bills</div>
                     ) : (
