@@ -18,7 +18,6 @@ label {
   padding-right: 1em;
   line-height: 2;
   display: inline-block;
-  width: 250px;
   cursor: pointer;
 }
 label:before {

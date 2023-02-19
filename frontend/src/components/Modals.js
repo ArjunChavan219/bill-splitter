@@ -14,7 +14,9 @@ class ParentModal {
                 right: 'auto',
                 bottom: 'auto',
                 transform: 'translate(-50%, -50%)',
-                width: 'fit-content'
+                width: 'fit-content',
+                maxHeight: '500px',
+                overflow: 'auto'
             }
         }
         const [modalIsOpen, setIsOpen] = useState(false)
@@ -121,8 +123,7 @@ function AddItem({ updateItems, userItems }) {
 
     return (
         <>
-            <MainModal object={modal} content="Add Items">
-                <div>This is the Add Item Modal</div>
+            <MainModal object={modal} buttonClass="add-button" content="Add">
                 <Checkbox type={"items"} updateWindow={updateItems} onRequestClose={modal.closeModal} userValueState={userItems} add={true}/>
             </MainModal>
         </>
@@ -135,8 +136,7 @@ function RemoveItem({ updateItems, userItems }) {
 
     return (
         <>
-            <MainModal object={modal} content="Remove Items">
-                <div>This is the Remove Item Modal</div>
+            <MainModal object={modal} buttonClass="remove-button" content="Remove">
                 {userItems.length === 0 ? (
                         <div>No active items</div>
                     ) : (
@@ -153,7 +153,7 @@ function SaveBill({ saveItems }) {
     
     return (
         <>
-            <MainModal object={modal} content="Save">
+            <MainModal object={modal} buttonClass="save-button" content="Save">
                 <div>This is the Save Bill Modal</div>
                 <div>Bill has been saved. Now Submit to begin calculation.</div>
             </MainModal>
@@ -168,7 +168,6 @@ function UpdateUser({ closePage, userState }) {
     return (
         <>
             <MainModal object={modal} content="Request Changes">
-                <div>This is the Update User Modal</div>
                 <Checkbox type={"users"} updateWindow={closePage} onRequestClose={modal.closeModal} userValueState={userState}/>
             </MainModal>
         </>

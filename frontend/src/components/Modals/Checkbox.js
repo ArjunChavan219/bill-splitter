@@ -74,7 +74,7 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
 
     return (
         <>
-            <h3>Select {type.charAt(0).toUpperCase() + type.slice(1)} to be {add ? "Added" : "Removed"}:</h3>
+            <h3>Select {type.charAt(0).toUpperCase() + type.slice(1)} to be {type === "users" ? "Requested" : (add ? "Added" : "Removed")}:</h3>
             <div className={"group"} style={{width: "auto", justifyContent: "center", margin: "10px"}}>
             {values.map((value, itr) => {
                 return (
