@@ -27,7 +27,6 @@ function Home() {
             } else {
                 setError(data.error)
             }
-            console.log(data.error);
         })
     }
 
@@ -36,7 +35,7 @@ function Home() {
     }
 
     return (
-        <div className={"container"}>
+        <div className={"container"} style={{maxWidth: "none"}}>
             <div className={"top"}></div>
             <div className={"bottom"}></div>
             <div className={"center"}>
