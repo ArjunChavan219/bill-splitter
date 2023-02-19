@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 function BillData({ data }) {
     let amount, nStatus, iStatus
     const name = data.name.slice(0, -9)
-    const date = data.name.slice(-9)
+    const date = data.name.slice(-8)
 
     if (data.amount === 0) {
         amount = "TBC"
@@ -24,7 +24,7 @@ function BillData({ data }) {
             <div className="col col-2">{name}</div>
             <div className="col col-3">{date}</div>
             <div className="col col-4">{amount}</div>
-      </li>
+        </li>
     )
 }
 

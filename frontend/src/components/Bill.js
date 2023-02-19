@@ -103,12 +103,12 @@ function ItemData({ data, itemState }) {
 
     
     return (
-        <tr>
-            <td>{data.name}</td>
-            <td>{data.type.charAt(0).toUpperCase() + data.type.slice(1)}</td>
-            <td>{data.quantity}</td>
-            <td>{shareContent}</td>
-        </tr>
+        <li className="table-row">
+            <div className="col col-1">{data.type.charAt(0).toUpperCase() + data.type.slice(1)}</div>
+            <div className="col col-2">{data.name}</div>
+            <div className="col col-3">{data.quantity}</div>
+            <div className="col col-4">{shareContent}</div>
+        </li>
     )
 }
 
@@ -120,6 +120,8 @@ const Bill = () => {
         return (<Unauthorized />)
     }
     const { name } = location.state
+    const billName = name.slice(0, -9)
+    const billDate = name.slice(-8)
     const { server } = useAuth()
     const [userItems, setUserItems] = useState([])
     const [saved, setSaved] = useState(false)
@@ -156,27 +158,42 @@ const Bill = () => {
 
     return (
         <>
-            <div>Bill: &nbsp; {name}</div>
-            <div>Items</div>
-            {userItems.length === 0 ? (<>
-                <div>You have no Items in this bill. Please add.</div>
-            </>) : (<>
-                <table><tbody>
-                    <tr>
-                        <th>Item</th>
-                        <th>Type</th>
-                        <th>Quantity</th>
-                        <th>Share</th>
-                    </tr>
-                    {userItems.map((item, itr) => <ItemData key={"item"+itr} data={item} itemState={[userItems, setUserItems]} />)}
-                </tbody></table>
-            </>)}
-            <AddItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
-            <RemoveItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
-            <br />
+            <h2 className={"text-3xl font-semibold mb-2"}>Bill: &nbsp; {`${billName} (${billDate})`}</h2>
+            <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
+                <div className={"p-4 flex-grow"}>
+                    {userItems.length !== 0 && (
+                        <div style={{marginBottom: "10px"}}>
+                            <ul className="responsive-table">
+                                <li className="table-header">
+                                    <div className="col col-1">Type</div>
+                                    <div className="col col-2">Item</div>
+                                    <div className="col col-3">Quantity</div>
+                                    <div className="col col-4">Share</div>
+                                </li>
+                                <div className="children">
+                                    {userItems.map((item, itr) => <ItemData key={"item"+itr} data={item} itemState={[userItems, setUserItems]} />)}
+                                </div>
+                            </ul>
+                        </div>
+                    )}
+                    <div className="btnDiv">
+                        <AddItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                        <RemoveItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                    </div>
+                    {userItems.length !== 0 && (
+                        <div className="btnDiv">
+                            <SaveBill saveItems={saveItems}/>
+                            {/* {!saved && <button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button>} */}
+                            {saved && <button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button>}
+                        </div>
+                    )}
+                </div>
+            </div>
+            
+            {/* <br />
             <SaveBill saveItems={saveItems}/>
             {saved && <button onClick={submit}>Submit</button>}
-            <button onClick={cancel}>Cancel</button>
+            <button onClick={cancel}>Cancel</button> */}
         </>
     )
 }
