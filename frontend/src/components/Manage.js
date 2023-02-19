@@ -5,11 +5,19 @@ import { useAuth } from "../provider/AuthProvider"
 
 
 function BillData({ data }) {
+    const name = data.name.slice(0, -9)
+    const date = data.name.slice(-8)
+    let nStatus = data.status.charAt(0).toUpperCase() + data.status.slice(1)
+    let iStatus = nStatus === "Open" ? "fa-ellipsis-h" : (nStatus === "Pending" ? "fa-unlock-alt" :
+     (nStatus === "Ready" ? "fa-pencil-square-o" : "fa-check-circle-o"))
+    const status = (<><i className={`fa ${iStatus}`} aria-hidden="true" /> {nStatus}</>)
+
     return (
-        <tr>
-            <td>{data.status === "ready" ? (<Link to="/manage-bill" state={data}>{data.name}</Link>) : data.name}</td>
-            <td>{data.status}</td>
-        </tr>
+        <li className="table-row">
+            <div className="col col-1">{data.status === "ready" ? (<Link to="/user/manage-bill" state={data}>{status}</Link>) : status}</div>
+            <div className="col col-2">{name}</div>
+            <div className="col col-3">{date}</div>
+        </li>
     )
 }
 
@@ -30,19 +38,23 @@ const Manage = () => {
 
     return (
         <>
-            <div>Bills</div>
-            {allBills.length === 0 ? (<>
-                <div>You have no Bills in the account. Please add.</div>
-            </>) : (<>
-                <table><tbody>
-                    <tr>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                    </tr>
-                    {allBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
-                    </tbody></table>
-            </>)}
+            <h2 className={"text-3xl font-semibold mb-2"}>All Bills</h2>
+            <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
+                {allBills.length !== 0 && (
+                    <div className={"p-4 flex-grow"}>
+                        <ul className="responsive-table">
+                            <li className="table-header">
+                                <div className="col col-1">Status</div>
+                                <div className="col col-2">Name</div>
+                                <div className="col col-3">Date</div>
+                            </li>
+                            <div className="children">
+                                {allBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
+                            </div>
+                        </ul>
+                    </div>
+                )}
+            </div>
         </>
     )
 }

@@ -68,6 +68,26 @@ main {
   content: '-';
 }
 
+.save-button {
+  background-color:#4d8ddb;
+}
+.save-button:hover {
+  background-color:#136cd9;
+}
+.save-button span:after {
+  content: '↓';
+}
+
+.submit-button {
+  background-color:#4d8ddb;
+}
+.submit-button:hover {
+  background-color:#136cd9;
+}
+.submit-button span:after {
+  content: '↑';
+}
+
 .confirm-button {
   width: 115px;
   height: 32px;

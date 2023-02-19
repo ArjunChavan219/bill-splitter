@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 
 import { useAuth } from "../provider/AuthProvider"
-import { ChangePassword } from "./Modals"
+import PERMISSIONS from "../permissions/Permissions"
 
 const logo = String(require("../assets/blank_profile.png"))
 
 
 const Profile = () => {
-    const { logout, server } = useAuth()
+    const { user, logout, server } = useAuth()
     const [userData, setUserData] = useState({})
 
     const logoutHandler = () => {
@@ -18,16 +19,20 @@ const Profile = () => {
         server.getUserData().then(data => {
             setUserData(data)
         })
-    }, [])    
+    }, [])
+
+    const userLogo = (<>
+        <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>
+            <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
+        </span>
+    </>)
 
     return (
         <div className={"flex items-center h-20 px-6 sm:px-10 bg-white"}>
-            <a href="/user"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></a>
+            <Link to="/user"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></Link>
             <div className={"flex flex-shrink-0 items-center ml-auto"}>
                 <span className={"font-semibold"}>{userData.firstName} {userData.lastName}</span>
-                <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>
-                    <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
-                </span>
+                {user.permissions.includes(PERMISSIONS.CAN_VIEW_ADMIN) ? (<Link style={{display: "flex"}} to="/user/manage">{userLogo}</Link>) : userLogo}
                 <div className={"border-l pl-3 ml-3 space-x-1"}>
                     <button className={"relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 focus:text-gray-600 rounded-full"} onClick={logoutHandler}>
                         <span className={"sr-only"}>Log out</span>
