@@ -28,6 +28,13 @@ export const AuthProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        if (!window.localStorage?.getItem("USER_STATE") || JSON.parse(window.localStorage?.getItem("USER_STATE")).username === "") {
+            Object.keys(window.localStorage).forEach(key => {
+                if (key.startsWith("BUE-")) {
+                    window.localStorage.removeItem(key)
+                }
+            })
+        }
         handlePageChange()
     }, [location])
 

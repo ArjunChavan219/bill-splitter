@@ -6,7 +6,7 @@ export default class Server {
     }
 
     session_check() {
-        const current_user = JSON.parse(window.sessionStorage?.getItem("USER_STATE")) || {
+        const current_user = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
             username: "",
             permissions: []
         }
@@ -15,9 +15,9 @@ export default class Server {
 
     async getRequest(endpoint, params) {
         const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
-        const cacheKey = `${endpoint}`
+        const cacheKey = `BUE-${endpoint}`
 
-        const cacheResponse = window.sessionStorage?.getItem(cacheKey)
+        const cacheResponse = window.localStorage?.getItem(cacheKey)
         if (cacheResponse) {
             return JSON.parse(cacheResponse)
         }
@@ -25,7 +25,7 @@ export default class Server {
         return fetch(request).then(
 			res => res.json()
 		).then(data => {
-            window.sessionStorage.setItem(cacheKey, JSON.stringify(data))
+            window.localStorage.setItem(cacheKey, JSON.stringify(data))
             return data
         })
     }
@@ -38,15 +38,15 @@ export default class Server {
 		}
 		return fetch(`${this.url}/${endpoint}`, requestOptions).then(res => {
             if (endpoint === "password") {
-                window.sessionStorage.removeItem("login")
+                window.localStorage.removeItem("BUE-login")
             } else if (endpoint === "update-user-bill") {
-                window.sessionStorage.removeItem("user-bill")
+                window.localStorage.removeItem("BUE-user-bill")
             } else {
-                window.sessionStorage.removeItem("user-bills")
-                window.sessionStorage.removeItem("all-bills")
+                window.localStorage.removeItem("BUE-user-bills")
+                window.localStorage.removeItem("BUE-all-bills")
             }
             if (endpoint === "unlock-bill") {
-                window.sessionStorage.removeItem("manage-bill")
+                window.localStorage.removeItem("BUE-manage-bill")
             }
             return res.json()
         })
