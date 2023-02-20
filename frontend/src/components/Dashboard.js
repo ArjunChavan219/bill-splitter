@@ -25,7 +25,6 @@ const Dashboard = () => {
 
     return (
         <>
-            {/* <h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1> */}
             <BillsSummary userBills={userBills}/>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>

@@ -164,12 +164,14 @@ const Bill = () => {
                     {userItems.length !== 0 && (
                         <div style={{marginBottom: "10px"}}>
                             <ul className="responsive-table">
-                                <li className="table-header">
-                                    <div className="col col-1">Type</div>
-                                    <div className="col col-2">Item</div>
-                                    <div className="col col-3">Quantity</div>
-                                    <div className="col col-4">Share</div>
-                                </li>
+                                <div className="parent">
+                                    <li className="table-header">
+                                        <div className="col col-1">Type</div>
+                                        <div className="col col-2">Item</div>
+                                        <div className="col col-3">Quantity</div>
+                                        <div className="col col-4">Share</div>
+                                    </li>
+                                </div>
                                 <div className="children">
                                     {userItems.map((item, itr) => <ItemData key={"item"+itr} data={item} itemState={[userItems, setUserItems]} />)}
                                 </div>

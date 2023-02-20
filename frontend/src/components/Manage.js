@@ -16,7 +16,7 @@ function BillData({ data }) {
         <li className="table-row">
             <div className="col col-1">{data.status === "ready" ? (<Link to="/user/manage-bill" state={data}>{status}</Link>) : status}</div>
             <div className="col col-2">{name}</div>
-            <div className="col col-3">{date}</div>
+            <div className="col col-1">{date}</div>
         </li>
     )
 }
@@ -43,11 +43,13 @@ const Manage = () => {
                 {allBills.length !== 0 && (
                     <div className={"p-4 flex-grow"}>
                         <ul className="responsive-table">
-                            <li className="table-header">
-                                <div className="col col-1">Status</div>
-                                <div className="col col-2">Name</div>
-                                <div className="col col-3">Date</div>
-                            </li>
+                            <div className="parent">
+                                <li className="table-header">
+                                    <div className="col col-1">Status</div>
+                                    <div className="col col-2">Name</div>
+                                    <div className="col col-1">Date</div>
+                                </li>
+                            </div>
                             <div className="children">
                                 {allBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
                             </div>

@@ -38,12 +38,14 @@ const Bills = ({ userBills, updateBills }) => {
         <div style={{marginBottom: "10px"}}>
             {userBills.length !== 0 && (<>
                 <ul className="responsive-table">
-                    <li className="table-header">
-                        <div className="col col-1">Status</div>
-                        <div className="col col-2">Name</div>
-                        <div className="col col-3">Date</div>
-                        <div className="col col-4">Amount</div>
-                    </li>
+                    <div className="parent">
+                        <li className="table-header">
+                            <div className="col col-1">Status</div>
+                            <div className="col col-2">Name</div>
+                            <div className="col col-3">Date</div>
+                            <div className="col col-4">Amount</div>
+                        </li>
+                    </div>
                     <div className="children">
                         {userBills.map((bill, itr) => <BillData key={itr} data={bill} />)}
                     </div>
