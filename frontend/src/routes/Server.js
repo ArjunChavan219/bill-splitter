@@ -18,7 +18,6 @@ export default class Server {
         const cacheAble = ["user-bill", "user-bills", "all-bills", "manage-bill"].includes(endpoint)
         let cacheKey;
         if (cacheAble) {
-            console.log(params);
             cacheKey = `BUE-${endpoint}`
             if (endpoint === "user-bill" || endpoint === "manage-bill") {
                 cacheKey += `-${params.bill.replace(" ", "_")}`
