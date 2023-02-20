@@ -6,7 +6,7 @@ import Login from "./Modals/Login"
 import Password from "./Modals/Password"
 
 class ParentModal {
-    constructor(customFunction) {
+    constructor() {
         this.modalStyle = {
             content: {
                 top: '50%',
@@ -24,9 +24,6 @@ class ParentModal {
         this.setIsOpen = setIsOpen
 
         this.openModal = () => {
-            if (customFunction !== undefined) {
-                customFunction()
-            }
             this.setIsOpen(true)
         }
 
@@ -36,10 +33,16 @@ class ParentModal {
     }
 }
 
-function MainModal({ object, buttonClass, content, children }) {
+function MainModal({ object, buttonClass, content, children, trigger }) {
+    useEffect(() => {
+        if (trigger) {
+            object.setIsOpen(true)
+        }
+    }, [])
+
     return (
         <>
-            <button onClick={object.openModal} className={`manage-button ${buttonClass}`}><span>{content}</span></button>
+            {!trigger && <button onClick={object.openModal} className={`manage-button ${buttonClass}`}><span>{content}</span></button>}
             <Modal isOpen={object.modalIsOpen} onRequestClose={object.closeModal} style={object.modalStyle}>
                 {children}
             </Modal>
@@ -148,14 +151,25 @@ function RemoveItem({ updateItems, userItems }) {
     )
 }
 
-function SaveBill({ saveItems }) {
-    const modal = new ParentModal(saveItems)
+function SaveBill() {
+    const modal = new ParentModal()
     
     return (
         <>
-            <MainModal object={modal} buttonClass="save-button" content="Save">
-                <div>This is the Save Bill Modal</div>
-                <div>Bill has been saved. Now Submit to begin calculation.</div>
+            <MainModal object={modal} buttonClass="save-button" content="Save" trigger={true}>
+                <div style={{margin: "-20px"}}>
+                <div className="flex items-center h-24 border border-gray-300 pr-4 w-full max-w-md shadow-lg">
+                    <div className="flex items-center justify-center bg-gray-300 w-2 h-full" />
+                    <div className="px-6">
+                        <h5 className="font-semibold" style={{marginTop: "10px"}}>Save Successful</h5>
+                        <p className="text-sm" style={{marginTop: "5px", marginBottom: "10px"}}>Your changes have been saved. Once confirmed, submit to lock the bill for calculation.</p>
+                    </div>
+                    <button onClick={modal.closeModal}>
+                        <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                    </button>
+                </div></div>
             </MainModal>
         </>
     )
