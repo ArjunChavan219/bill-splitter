@@ -7,8 +7,8 @@ import { AddItem, RemoveItem, SaveBill } from "./Modals"
 import Unauthorized from "./Unauthorized"
 
 
-function TextInput({ setShare, outOf, quantity, share }) {
-
+function TextInput({ shareState, outOf, quantity }) {
+    const [share, setShare] = shareState
     let total
     if (typeof outOf === "number") {
         total = outOf
@@ -38,7 +38,8 @@ function TextInput({ setShare, outOf, quantity, share }) {
     )
 }
 
-function Dropdown({ setShare, quantity, share }) {
+function Dropdown({ shareState, quantity }) {
+    const [share, setShare] = shareState
     const options = ["Sharing", "1", "1/2 of 1", "1/4 of 1", "3/4 of 1", "Custom", "More than 1"]
     const values = [0, 1, 0.5, 0.25, 0.75]
     if (quantity === 1) {
@@ -93,12 +94,12 @@ function ItemData({ data, itemState }) {
 
     let shareContent = ""
     if (data.type === "liquor") {
-        shareContent = (<TextInput setShare={setShare} outOf={data.quantity + "x " + data.name.match(/ (\d+Ml)$/)[1]}
-         quantity={data.quantity} share={share}/>)
+        shareContent = (<TextInput shareState={[share, setShare]} outOf={data.quantity + "x " + data.name.match(/ (\d+Ml)$/)[1]}
+         quantity={data.quantity}/>)
     } else if (data.type === "miscellaneous") {
-        shareContent = (<TextInput setShare={setShare} outOf={data.quantity} share={share}/>)
+        shareContent = (<TextInput shareState={[share, setShare]} outOf={data.quantity}/>)
     } else {
-        shareContent = (<Dropdown setShare={setShare} quantity={data.quantity} share={share}/>)
+        shareContent = (<Dropdown shareState={[share, setShare]} quantity={data.quantity}/>)
     }
 
     
@@ -180,22 +181,14 @@ const Bill = () => {
                     )}
                     <div className="btnDiv">
                         <AddItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                        {userItems.length !== 0 && (<>
+                            {!saved && <button onClick={saveItems} className={`manage-button save-button`}><span>Save</span></button>}
+                            {saved && (<><SaveBill /><button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button></>)}
+                        </>)}
                         <RemoveItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
                     </div>
-                    {userItems.length !== 0 && (
-                        <div className="btnDiv">
-                            <SaveBill saveItems={saveItems}/>
-                            {/* {!saved && <button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button>} */}
-                            {saved && <button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button>}
-                        </div>
-                    )}
                 </div>
             </div>
-            
-            {/* <br />
-            <SaveBill saveItems={saveItems}/>
-            {saved && <button onClick={submit}>Submit</button>}
-            <button onClick={cancel}>Cancel</button> */}
         </>
     )
 }
