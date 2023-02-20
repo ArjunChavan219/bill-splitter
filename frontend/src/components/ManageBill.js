@@ -52,12 +52,12 @@ const ManageBill = () => {
 
     function saveBill() {
         server.saveBill(name, billItems).then(data => {
-            navigate("/manage", {replace: true})
+            navigate("/user/manage", {replace: true})
         })        
     }
 
     function closePage() {
-        navigate("/manage", {replace: true})
+        navigate("/user/manage", {replace: true})
     }
 
     useEffect(() => {
