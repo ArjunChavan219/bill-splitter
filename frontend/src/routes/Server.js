@@ -15,17 +15,27 @@ export default class Server {
 
     async getRequest(endpoint, params) {
         const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
-        const cacheKey = `BUE-${endpoint}`
+        const cacheAble = ["user-bill", "user-bills", "all-bills", "manage-bill"].includes(endpoint)
+        let cacheKey;
+        if (cacheAble) {
+            console.log(params);
+            cacheKey = `BUE-${endpoint}`
+            if (endpoint === "user-bill" || endpoint === "manage-bill") {
+                cacheKey += `-${params.bill.replace(" ", "_")}`
+            }
 
-        const cacheResponse = window.localStorage?.getItem(cacheKey)
-        if (cacheResponse) {
-            return JSON.parse(cacheResponse)
+            const cacheResponse = window.localStorage?.getItem(cacheKey)
+            if (cacheResponse) {
+                return JSON.parse(cacheResponse)
+            }
         }
 
         return fetch(request).then(
 			res => res.json()
 		).then(data => {
-            window.localStorage.setItem(cacheKey, JSON.stringify(data))
+            if (cacheAble) {
+                window.localStorage.setItem(cacheKey, JSON.stringify(data))
+            }
             return data
         })
     }
@@ -40,13 +50,13 @@ export default class Server {
             if (endpoint === "password") {
                 window.localStorage.removeItem("BUE-login")
             } else if (endpoint === "update-user-bill") {
-                window.localStorage.removeItem("BUE-user-bill")
+                window.localStorage.removeItem(`BUE-user-bill-${body.bill.replace(" ", "_")}`)
             } else {
                 window.localStorage.removeItem("BUE-user-bills")
                 window.localStorage.removeItem("BUE-all-bills")
             }
             if (endpoint === "unlock-bill") {
-                window.localStorage.removeItem("BUE-manage-bill")
+                window.localStorage.removeItem(`BUE-manage-bill-${body.bill.replace(" ", "_")}`)
             }
             return res.json()
         })
