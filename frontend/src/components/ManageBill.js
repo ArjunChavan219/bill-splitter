@@ -16,17 +16,19 @@ function ItemData({ data, itemState }) {
     });
 
     return (
-        <tr>
-            <td>{data.name}</td>
-            <td><table><tbody>
-                <tr>
-                    {users.map(user => <td key={user}>{user}</td>)}
-                </tr>
-                <tr>
-                    {shares.map(share => <td key={share}>{share}</td>)}
-                </tr>
-            </tbody></table></td>
-        </tr>
+        <li className="table-row">
+            <div className="col col-4">{data.name}</div>
+            <div className="col col-5">
+                <table><tbody>
+                    <tr>
+                        {users.map(user => <td key={user}>{user}</td>)}
+                    </tr>
+                    <tr>
+                        {shares.map(share => <td key={share}>{share}</td>)}
+                    </tr>
+                </tbody></table>
+            </div>
+        </li>
     )
 }
 
@@ -39,6 +41,8 @@ const ManageBill = () => {
     }
     
     const { name } = location.state
+    const billName = name.slice(0, -9)
+    const billDate = name.slice(-8)
     const { server } = useAuth()
     const [billItems, setBillItems] = useState([])
     const [billUsers, setBillUsers] = useState([])
@@ -66,17 +70,28 @@ const ManageBill = () => {
 
     return (
         <>
-            <div>Bill: &nbsp; {name}</div>
-            <div>Items</div>
-            <table><tbody>
-                <tr>
-                    <th>Item</th>
-                    <th>Shares</th>
-                </tr>
-                {billItems.map((item, itr) => <ItemData key={"item"+itr} data={item} itemState={[billItems, setBillItems]} />)}
-            </tbody></table>
-            <button onClick={saveBill}>Save</button>
-            <UpdateUser closePage={closePage} userState={[name, billUsers]}/>
+            <h2 className={"text-3xl font-semibold mb-2"}>Bill: &nbsp; {`${billName} (${billDate})`}</h2>
+            <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
+                <div className={"p-4 flex-grow"}>
+                        <div style={{marginBottom: "10px"}}>
+                            <ul className="responsive-table">
+                                <div className="parent">
+                                    <li className="table-header">
+                                        <div className="col col-4">Item</div>
+                                        <div className="col col-5">Shares</div>
+                                    </li>
+                                </div>
+                                <div className="children">
+                                    {billItems.map((item, itr) => <ItemData key={"item"+itr} data={item} itemState={[billItems, setBillItems]} />)}
+                                </div>
+                            </ul>
+                        </div>
+                    <div className="btnDiv">
+                        <button onClick={saveBill} className={`manage-button save-button`} style={{marginRight: "7.5em"}}><span>Save</span></button>
+                        <UpdateUser closePage={closePage} userState={[name, billUsers]}/>
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

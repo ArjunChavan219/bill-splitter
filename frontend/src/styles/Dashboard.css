@@ -155,6 +155,11 @@ main {
   flex-basis: 30%;
   text-align: center;
 }
+.responsive-table .col-5 {
+  flex-basis: 70%;
+  text-align: center;
+  overflow: auto;
+}
 
 
 h3 {
@@ -162,4 +167,10 @@ h3 {
   font-size: 1.17em;
   font-weight: bold;
   margin-bottom: 0.5em;
+}
+
+table {
+  margin: auto;
+  border-collapse:separate;
+  border-spacing: 20px 0px;
 }

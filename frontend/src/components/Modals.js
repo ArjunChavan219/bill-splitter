@@ -181,7 +181,7 @@ function UpdateUser({ closePage, userState }) {
     
     return (
         <>
-            <MainModal object={modal} content="Request Changes">
+            <MainModal object={modal} buttonClass="submit-button" content="Change">
                 <Checkbox type={"users"} updateWindow={closePage} onRequestClose={modal.closeModal} userValueState={userState}/>
             </MainModal>
         </>
