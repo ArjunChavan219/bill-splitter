@@ -17,6 +17,7 @@ function BillData({ data }) {
             <div className="col col-1">{data.status === "ready" ? (<Link to="/user/manage-bill" state={data}>{status}</Link>) : status}</div>
             <div className="col col-2">{name}</div>
             <div className="col col-1">{date}</div>
+            <div className="col col-1">{data.members}</div>
         </li>
     )
 }
@@ -48,6 +49,7 @@ const Manage = () => {
                                     <div className="col col-1">Status</div>
                                     <div className="col col-2">Name</div>
                                     <div className="col col-1">Date</div>
+                                    <div className="col col-1">Members</div>
                                 </li>
                             </div>
                             <div className="children">
