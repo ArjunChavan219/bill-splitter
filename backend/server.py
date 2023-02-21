@@ -12,14 +12,14 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/login', methods=["POST"])
+# Check if username and password exist
+@app.route('/login', methods=["GET"])
 def login_check():
     users_list = list(users.find({}, {"_id": False, "username": True, "password": True}))
     users_dict = {user["username"]: user["password"] for user in users_list}
 
-    username = request.json["username"]
-    password = request.json["password"]
-
+    username = request.args.get("username")
+    password = request.args.get("password")
     if username not in users_dict:
         return {
             "success": False,
@@ -36,6 +36,7 @@ def login_check():
     }
 
 
+# Change password
 @app.route('/password', methods=["POST"])
 def change_password():
     print(request.json)
@@ -48,22 +49,25 @@ def change_password():
     }
 
 
-@app.route('/permission', methods=["POST"])
+# Get User Group for a user
+@app.route('/permission', methods=["GET"])
 def permission_check():
     user_groups = db["userGroups"]
-    username = request.json["username"]
+    username = request.args.get("username")
 
     return {
         "userGroup": user_groups.find({"users": username}, {"_id": False, "name": True})[0]["name"]
     }
 
 
-@app.route('/user', methods=["POST"])
+# Get User data
+@app.route('/user', methods=["GET"])
 def user_data():
-    username = request.json["username"]
-    return users.find({"username": username}, {"_id": False})[0]
+    username = request.args.get("username")
+    return users.find({"username": username}, {"_id": False, "firstName": True, "lastName": True})[0]
 
 
+# Get list of all unsettled bills
 @app.route('/bills', methods=["GET"])
 def get_bills():
     return {
@@ -71,9 +75,10 @@ def get_bills():
     }
 
 
-@app.route('/bill', methods=["POST"])
+# Get bill data
+@app.route('/bill', methods=["GET"])
 def get_bill():
-    items = list(bills.find({"name": request.json["bill"]}, {"_id": False, "items": True}))[0]["items"]
+    items = list(bills.find({"name": request.args.get("bill")}, {"_id": False, "items": True}))[0]["items"]
     for item in items:
         item["cost"] = 0
         item["share"] = 0
@@ -81,19 +86,22 @@ def get_bill():
     return {"items": items}
 
 
-@app.route('/user-bills', methods=["POST"])
+# Get bills for the user
+@app.route('/user-bills', methods=["GET"])
 def get_user_bills():
-    return list(users.find({"username": request.json["username"]},
+    return list(users.find({"username": request.args.get("username")},
                            {"_id": False, "bills.name": True, "bills.amount": True,
                             "bills.paid": True, "bills.locked": True}))[0]
 
 
-@app.route('/user-bill', methods=["POST"])
+# Get a bill for the user
+@app.route('/user-bill', methods=["GET"])
 def get_user_bill():
-    return list(users.find({"username": request.json["username"], "bills.name": request.json["bill"]},
+    return list(users.find({"username": request.args.get("username"), "bills.name": request.args.get("bill")},
                            {"_id": False, "bills.$": 1}))[0]["bills"][0]
 
 
+# Add a bill to user bills
 @app.route('/add-user-bills', methods=["POST"])
 def add_user_bills():
     user_entry = {"username": request.json["username"], "locked": False}
@@ -106,6 +114,7 @@ def add_user_bills():
     return {}
 
 
+# Remove a bill from user bills
 @app.route('/remove-user-bills', methods=["POST"])
 def remove_user_bills():
     username = request.json["username"]
@@ -117,6 +126,7 @@ def remove_user_bills():
     return {}
 
 
+# Update a user bill
 @app.route('/update-user-bill', methods=["POST"])
 def update_user_bill():
     users.update_one({"username": request.json["username"], "bills.name": request.json["bill"]},
@@ -125,6 +135,7 @@ def update_user_bill():
     return {}
 
 
+# Lock a user bill
 @app.route('/lock-user-bill', methods=["POST"])
 def lock_user_bill():
     username = request.json["username"]
@@ -137,6 +148,20 @@ def lock_user_bill():
     return {}
 
 
+# Unlock a bill for the users
+@app.route('/unlock-bill', methods=["POST"])
+def unlock_bill():
+    usernames = request.json["users"]
+    bill_name = request.json["bill"]
+
+    users.update_many({"username": {"$in": usernames}, "bills.name": bill_name},
+                      {"$set": {"bills.$.locked": False}})
+    bills.update_one({"name": bill_name}, {"$set": {"members.$[elem].locked": False}},
+                     array_filters=[{"elem.username": {"$in": usernames}}])
+    return {}
+
+
+# Get all bills and update their statuses
 @app.route('/all-bills', methods=["GET"])
 def get_all_bills():
     all_bills = list(bills.find({}, {"_id": False, "name": True, "status": True, "members.locked": True}))
@@ -147,7 +172,7 @@ def get_all_bills():
         if bill["status"] != "settled" and bill["status"] != status:
             bill["status"] = status
             update_bills.append((bill["name"], status))
-        del bill["members"]
+        bill["members"] = len(bill["members"])
 
     if len(update_bills) != 0:
         bills.bulk_write([pymongo.UpdateOne({"name": entry[0]},
@@ -158,10 +183,11 @@ def get_all_bills():
     }
 
 
-@app.route('/manage-bill', methods=["POST"])
+# Calculate and get user and item details for a bill
+@app.route('/manage-bill', methods=["GET"])
 def manage_bill():
-    users_data = list(db.users.find({"bills.name": request.json["bill"]},
-                                    {"_id": False, "username": True, "bills.$": True}))
+    bill = request.args.get("bill")
+    users_data = list(users.find({"bills.name": bill}, {"_id": False, "username": True, "bills.$": True}))
     items_data: dict[str, dict[str, list]] = {}
     bill_users = []
 
@@ -193,13 +219,13 @@ def manage_bill():
                 change = (1 - total_share)/len(specified)
                 for user in item_users:
                     if user["username"] in specified:
-                        user["share"] = round(user["share"] + change, 3)
+                        user["share"] = round(user["share"] + change, 2)
         else:
             if total_share < 1:
                 change = (1 - total_share) / len(sharing)
                 for user in item_users:
                     if user["username"] in sharing:
-                        user["share"] = round(change, 3)
+                        user["share"] = round(change, 2)
             else:
                 if total_share > 1:
                     change = (1 - total_share) / len(specified)
@@ -210,24 +236,25 @@ def manage_bill():
 
                 for user in item_users:
                     if user["username"] in sharing:
-                        user["share"] = round(change, 3)
+                        user["share"] = round(change, 2)
                     else:
-                        user["share"] = round(user["share"] * change * len(specified), 3)
+                        user["share"] = round(user["share"] * change * len(specified), 2)
+
+    extra_items = [item["name"] for item in list(bills.find({"name": bill}, {"_id": False, "items": True}))[0]["items"]]
+    for item in extra_items:
+        if item not in items_data:
+            items_data[item] = {
+                "name": item,
+                "users": []
+            }
+
     return {
         "items": list(items_data.values()),
         "users": bill_users
     }
 
 
-@app.route('/unlock-bill', methods=["POST"])
-def unlock_bill():
-    users.update_many({"username": {"$in": request.json["users"]}, "bills.name": request.json["bill"]},
-                      {"$set": {"bills.$.locked": False}})
-    bills.update_one({"name": request.json["bill"]}, {"$set": {"members.$[elem].locked": False}},
-                     array_filters=[{"elem.username": {"$in": request.json["users"]}}])
-    return {}
-
-
+# Save bill and update amounts for users
 @app.route('/save-bill', methods=["POST"])
 def save_bill():
     items_data = request.json["items"]
@@ -238,7 +265,7 @@ def save_bill():
         for user in item["users"]:
             if user["username"] not in user_items:
                 user_items[user["username"]] = {"items": [], "amount": 0}
-            cost = round(items[item["name"]]["cost"] * user["share"], 3)
+            cost = round(items[item["name"]]["cost"] * user["share"], 2)
             user_items[user["username"]]["items"].append({
                 "name": item["name"],
                 "quantity": items[item["name"]]["quantity"],
@@ -251,7 +278,7 @@ def save_bill():
     bills.update_one({"name": request.json["bill"]}, {"$set": {"status": "settled"}})
     users.bulk_write([pymongo.UpdateOne({"username": user, "bills.name": request.json["bill"]},
                                         {"$set": {"bills.$.items": user_items[user]["items"],
-                                                  "bills.$.amount": user_items[user]["amount"]}})
+                                                  "bills.$.amount": round(user_items[user]["amount"])}})
                       for user in user_items])
 
     return {}

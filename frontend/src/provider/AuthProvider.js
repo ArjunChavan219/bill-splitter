@@ -9,7 +9,6 @@ const AuthContext = createContext(null)
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const redirectPath = location.state?.path || "/user"
     const userState = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
         username: "",
         permissions: []
@@ -28,6 +27,13 @@ export const AuthProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        if (!window.localStorage?.getItem("USER_STATE") || JSON.parse(window.localStorage?.getItem("USER_STATE")).username === "") {
+            Object.keys(window.localStorage).forEach(key => {
+                if (key.startsWith("BUE-")) {
+                    window.localStorage.removeItem(key)
+                }
+            })
+        }
         handlePageChange()
     }, [location])
 
@@ -40,7 +46,7 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setUser({ username: user, permissions: ["view_about"] })
             }
-            navigate(redirectPath, { replace: true })
+            navigate("/user", { replace: true })
         })
     }
     const logout = () => {

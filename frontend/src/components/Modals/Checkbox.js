@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 
 import { useAuth } from "../../provider/AuthProvider"
 
+import "../../styles/Checkbox.css"
+
 
 const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) => {
     const { server } = useAuth()
@@ -72,18 +74,19 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
 
     return (
         <>
-            <div>Select {type}</div>
+            <h3>Select {type.charAt(0).toUpperCase() + type.slice(1)} to be {type === "users" ? "Requested" : (add ? "Added" : "Removed")}:</h3>
+            <div className={"group"} style={{width: "auto", justifyContent: "center", margin: "10px"}}>
             {values.map((value, itr) => {
                 return (
-                    <div key={itr}>
-                        <label>
-                            <input type="checkbox" checked={valueChecked[itr]} onChange={() => handleChange(itr)} />
-                            {type !== "items" ? value : value["name"]}
-                        </label>
+                    <div key={itr} style={{width: "auto"}}>
+                        <input id={`cb-${itr}`} type="checkbox" checked={valueChecked[itr]} onChange={() => handleChange(itr)} />
+                        <label className="cbLabel" htmlFor={`cb-${itr}`}>{type !== "items" ? value : value["name"]}</label>
                     </div>
                 )
             })}
-            <button onClick={handleAdd}>{type === "users" ? "Request" : (add ? "Add" : "Remove")}</button>
+
+            <button onClick={handleAdd} className={`manage-button confirm-button`}><span>Confirm</span></button>
+            </div>
         </>
     )
 }
