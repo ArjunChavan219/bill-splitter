@@ -174,3 +174,16 @@ table {
   border-collapse:separate;
   border-spacing: 20px 0px;
 }
+
+select {
+  border: 1px solid black;
+  width: 130px;
+  text-align: center;
+  padding: 5px;
+  margin: -5x 0px;
+}
+
+input[type=number] {
+  margin-left: 5px;
+  text-align: right;
+}

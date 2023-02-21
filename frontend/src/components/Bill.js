@@ -23,7 +23,13 @@ function TextInput({ shareState, outOf, quantity }) {
     const [shareValue, setShareValue] = useState(share !== 0 ? share*total : 1)
 
     function handleChange(event) {
-        setShareValue(event.target.value)
+        if (event.target.value < 1) {
+            event.target.value = 0
+        } else if (event.target.value > total) {
+            event.target.value = total
+        } else {
+            setShareValue(event.target.value)
+        }
     }
 
     function handleExit(event) {
@@ -33,7 +39,7 @@ function TextInput({ shareState, outOf, quantity }) {
     return (
         <>
             <input type="number" onBlur={handleExit} onChange={handleChange} min={1} step={1} max={total} value={shareValue}/>
-            <label>&nbsp;{((typeof outOf === "string" && outOf.endsWith("Ml")) && (<>ml&nbsp;</>))}Out of {outOf}</label>
+            <label>{((typeof outOf === "string" && outOf.endsWith("Ml")) && (<>ml&nbsp;</>))}of {outOf}</label>
         </>
     )
 }
@@ -71,8 +77,34 @@ function Dropdown({ shareState, quantity }) {
                     <option key={"selection"+itr} value={itr}>{value}</option>
                 ))}
             </select>
-            {selection > 4 && (<TextInput setShare={setShare} outOf={selection === 5 ? `100% of ${quantity}` : `${quantity}`}
+            {selection > 4 && (<TextInput shareState={shareState} outOf={selection === 5 ? `100% of ${quantity}` : `${quantity}`}
              quantity={quantity} share={share}/>)}
+        </>
+    )
+}
+
+function Dropdown2({ shareState, quantity, total }) {
+    const [share, setShare] = shareState
+    const options = ["Sharing", "x mL"]
+
+    const [selection, setSelection] = useState(share === 0 ? 0 : 1)
+
+    function handleSelection(event) {
+        const value = Number(event.target.value)
+        setSelection(value)
+        if (value === 0) {
+            setShare(0)
+        }
+    }
+
+    return (
+        <>
+            <select onChange={handleSelection} defaultValue={selection}>
+                {options.map((value, itr) => (
+                    <option key={"selection"+itr} value={itr}>{value}</option>
+                ))}
+            </select>
+            {selection === 1 && (<TextInput shareState={[share, setShare]} outOf={quantity + "x " + total} quantity={quantity}/>)}
         </>
     )
 }
@@ -94,8 +126,7 @@ function ItemData({ data, itemState }) {
 
     let shareContent = ""
     if (data.type === "liquor") {
-        shareContent = (<TextInput shareState={[share, setShare]} outOf={data.quantity + "x " + data.name.match(/ (\d+Ml)$/)[1]}
-         quantity={data.quantity}/>)
+        shareContent = (<Dropdown2 shareState={[share, setShare]} quantity={data.quantity} total={data.name.match(/ (\d+Ml)$/)[1]}/>)
     } else if (data.type === "miscellaneous") {
         shareContent = (<TextInput shareState={[share, setShare]} outOf={data.quantity}/>)
     } else {
