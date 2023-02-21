@@ -172,7 +172,7 @@ def get_all_bills():
         if bill["status"] != "settled" and bill["status"] != status:
             bill["status"] = status
             update_bills.append((bill["name"], status))
-        del bill["members"]
+        bill["members"] = len(bill["members"])
 
     if len(update_bills) != 0:
         bills.bulk_write([pymongo.UpdateOne({"name": entry[0]},
@@ -186,8 +186,8 @@ def get_all_bills():
 # Calculate and get user and item details for a bill
 @app.route('/manage-bill', methods=["GET"])
 def manage_bill():
-    users_data = list(db.users.find({"bills.name": request.args.get("bill")},
-                                    {"_id": False, "username": True, "bills.$": True}))
+    bill = request.args.get("bill")
+    users_data = list(users.find({"bills.name": bill}, {"_id": False, "username": True, "bills.$": True}))
     items_data: dict[str, dict[str, list]] = {}
     bill_users = []
 
@@ -239,6 +239,15 @@ def manage_bill():
                         user["share"] = round(change, 3)
                     else:
                         user["share"] = round(user["share"] * change * len(specified), 3)
+
+    extra_items = [item["name"] for item in list(bills.find({"name": bill}, {"_id": False, "items": True}))[0]["items"]]
+    for item in extra_items:
+        if item not in items_data:
+            items_data[item] = {
+                "name": item,
+                "users": []
+            }
+
     return {
         "items": list(items_data.values()),
         "users": bill_users
