@@ -80,7 +80,7 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                 return (
                     <div key={itr} style={{width: "auto"}}>
                         <input id={`cb-${itr}`} type="checkbox" checked={valueChecked[itr]} onChange={() => handleChange(itr)} />
-                        <label htmlFor={`cb-${itr}`}>{type !== "items" ? value : value["name"]}</label>
+                        <label className="cbLabel" htmlFor={`cb-${itr}`}>{type !== "items" ? value : value["name"]}</label>
                     </div>
                 )
             })}
