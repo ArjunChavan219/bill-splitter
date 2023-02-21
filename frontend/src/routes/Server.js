@@ -57,6 +57,11 @@ export default class Server {
             if (endpoint === "unlock-bill") {
                 window.localStorage.removeItem(`BUE-manage-bill-${body.bill.replace(" ", "_")}`)
             }
+            if (endpoint === "remove-user-bills") {
+                body.bills.forEach(bill => {
+                    window.localStorage.removeItem(`BUE-user-bill-${bill.replace(" ", "_")}`)
+                });
+            }
             return res.json()
         })
     }
