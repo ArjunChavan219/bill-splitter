@@ -219,13 +219,13 @@ def manage_bill():
                 change = (1 - total_share)/len(specified)
                 for user in item_users:
                     if user["username"] in specified:
-                        user["share"] = round(user["share"] + change, 3)
+                        user["share"] = round(user["share"] + change, 2)
         else:
             if total_share < 1:
                 change = (1 - total_share) / len(sharing)
                 for user in item_users:
                     if user["username"] in sharing:
-                        user["share"] = round(change, 3)
+                        user["share"] = round(change, 2)
             else:
                 if total_share > 1:
                     change = (1 - total_share) / len(specified)
@@ -236,9 +236,9 @@ def manage_bill():
 
                 for user in item_users:
                     if user["username"] in sharing:
-                        user["share"] = round(change, 3)
+                        user["share"] = round(change, 2)
                     else:
-                        user["share"] = round(user["share"] * change * len(specified), 3)
+                        user["share"] = round(user["share"] * change * len(specified), 2)
 
     extra_items = [item["name"] for item in list(bills.find({"name": bill}, {"_id": False, "items": True}))[0]["items"]]
     for item in extra_items:
@@ -265,7 +265,7 @@ def save_bill():
         for user in item["users"]:
             if user["username"] not in user_items:
                 user_items[user["username"]] = {"items": [], "amount": 0}
-            cost = round(items[item["name"]]["cost"] * user["share"], 3)
+            cost = round(items[item["name"]]["cost"] * user["share"], 2)
             user_items[user["username"]]["items"].append({
                 "name": item["name"],
                 "quantity": items[item["name"]]["quantity"],
@@ -278,7 +278,7 @@ def save_bill():
     bills.update_one({"name": request.json["bill"]}, {"$set": {"status": "settled"}})
     users.bulk_write([pymongo.UpdateOne({"username": user, "bills.name": request.json["bill"]},
                                         {"$set": {"bills.$.items": user_items[user]["items"],
-                                                  "bills.$.amount": user_items[user]["amount"]}})
+                                                  "bills.$.amount": round(user_items[user]["amount"])}})
                       for user in user_items])
 
     return {}
