@@ -1,6 +1,8 @@
+const apiURL = process.env.REACT_APP_API_URL
+
 export default class Server {
     constructor(user, handlePageChange) {
-        this.url = "http://0.0.0.0:5001"
+        this.url = apiURL
         this.user = user
         this.handlePageChange = handlePageChange
     }
