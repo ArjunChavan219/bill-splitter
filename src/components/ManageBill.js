@@ -34,6 +34,7 @@ function ItemData({ data, itemState }) {
 
 
 const ManageBill = () => {
+    // Update user shares by Admin
     const location = useLocation()
     const navigate = useNavigate()
     if (location.state === null) {
