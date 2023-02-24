@@ -13,6 +13,8 @@ function Home() {
     useEffect(() => {
         if (user.username) {
             navigate("/user", { replace: true })
+        } else {
+            document.title = "PerePro Login"
         }
     }, [])
 

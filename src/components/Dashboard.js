@@ -14,6 +14,7 @@ const Dashboard = () => {
     const [userBills, setUserBills] = useState([])
 
     useEffect(() => {
+        document.title = "PerePro Dashboard"
         updateBills()
     }, [])
 
