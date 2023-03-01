@@ -3,8 +3,7 @@ import { useAuth } from "../provider/AuthProvider"
 
 import Bills from "./Bills"
 import BillsSummary from "./BillsSummary"
-import Profile from "./Profile"
-import { AddBill, RemoveBill } from "./Modals"
+import { AddRemoveModal } from "./Modals"
 
 import "../styles/Dashboard.css"
 
@@ -31,8 +30,8 @@ const Dashboard = () => {
                 <div className={"p-4 flex-grow"}>
                     <Bills userBills={userBills} updateBills={updateBills}/>
                     <div className="btnDiv">
-                        <AddBill updateBills={updateBills} userBills={userBills.map(bill => bill.name)}/>
-                        <RemoveBill updateBills={updateBills} userBills={userBills.filter(bill => !bill.locked).map(bill => bill.name)} />
+                        <AddRemoveModal update={updateBills} user={[userBills.map(bill => bill.name)]} type={"bills"} add={true} />
+                        <AddRemoveModal update={updateBills} user={[userBills.filter(bill => !bill.locked).map(bill => bill.name)]} type={"bills"} add={false} />
                     </div>
                 </div>
                 

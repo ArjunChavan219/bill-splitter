@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 import { useAuth } from "../provider/AuthProvider"
 
-import { AddItem, RemoveItem, SaveBill } from "./Modals"
+import { AddRemoveModal, SaveBill } from "./Modals"
 import Unauthorized from "./Unauthorized"
 
 
@@ -211,12 +211,12 @@ const Bill = () => {
                         </div>
                     )}
                     <div className="btnDiv">
-                        <AddItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                        <AddRemoveModal user={[userItems, setUserItems, name]} type={"items"} add={true} />
                         {userItems.length !== 0 && (<>
                             {!saved && <button onClick={saveItems} className={`manage-button save-button`}><span>Save</span></button>}
                             {saved && (<><SaveBill /><button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button></>)}
                         </>)}
-                        <RemoveItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                        <AddRemoveModal user={[userItems, setUserItems, name]} type={"items"} add={false} />
                     </div>
                 </div>
             </div>

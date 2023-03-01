@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import { Outlet } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
-
-import Bills from "./Bills"
-import BillsSummary from "./BillsSummary"
 import Profile from "./Profile"
-import { AddBill, RemoveBill } from "./Modals"
 
 import "../styles/Dashboard.css"
 
