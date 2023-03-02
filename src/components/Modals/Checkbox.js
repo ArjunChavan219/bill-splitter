@@ -9,32 +9,51 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
     const { server } = useAuth()
     const [values, setValues] = useState([])
     const [valueChecked, setValueChecked] = useState([])
-    let billName, userValues, setUserValues;
+    let billData, userValues, setUserValues;
     if (type === "bills") {
-        userValues = userValueState
-    } else if (type === "users") {
-        [billName, userValues] = userValueState
+        userValues = userValueState[0]
+    } else if (type === "update-users") {
+        [billData, userValues] = userValueState
     } else {
-        [billName, userValues, setUserValues] = userValueState
+        [userValues, setUserValues, billData] = userValueState
     }
 
     useEffect(() => {
-        if (type === "users" || !add) {
-            setValues(userValues)
-            setValueChecked(new Array(userValues.length).fill(false))
-        } else {
-            if (type === "bills") {
-                server.getBills().then(data => {
-                    setValues(data.bills.filter(bill => !userValues.includes(bill)))
-                    setValueChecked(new Array(data.bills.length).fill(false))
-                })
+        let finalValues;
+        if (type === "update-users" || !add) {
+            if (type === "item-users") {
+                finalValues = userValues.map(user => user[0])
+            } else if (type === "users") {
+                finalValues = userValues.filter(user => !billData[1].includes(user))
             } else {
-                server.getBill(billName).then(data => {
-                    const userValueNames = userValues.map(item => item.name)
-                    setValues(data.items.filter(item => !userValueNames.includes(item.name)))
-                    setValueChecked(new Array(data.items.length).fill(false))
-                })
+                finalValues = userValues
             }
+            setValues(finalValues)
+            setValueChecked(new Array(finalValues.length).fill(false))
+        } else if (type === "bills") {
+            server.getBills().then(data => {
+                finalValues = data.bills.filter(bill => !userValues.includes(bill))
+                setValues(finalValues)
+                setValueChecked(new Array(finalValues.length).fill(false))
+            })
+        } else if (type === "item-users") {
+            const userValueNames = userValues.map(user => user[0])
+            finalValues = billData.filter(user => !userValueNames.includes(user))
+            setValues(finalValues)
+            setValueChecked(new Array(finalValues.length).fill(false))
+        } else if (type === "users") {
+            server.getUsers(billData[0]).then(data => {
+                finalValues = data.users.filter(user => !userValues.includes(user))
+                setValues(finalValues)
+                setValueChecked(new Array(finalValues.length).fill(false))
+            })
+        } else {
+            server.getBill(billData).then(data => {
+                const userValueNames = userValues.map(item => item.name)
+                finalValues = data.items.filter(item => !userValueNames.includes(item.name))
+                setValues(finalValues)
+                setValueChecked(new Array(finalValues.length).fill(false))
+            })
         }
     }, [])
 
@@ -44,8 +63,8 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
 
     function handleAdd() {
         const selectedValues = values.filter((value, itr) => valueChecked[itr])
-        if (type === "users") {
-            server.unlockBill(billName, selectedValues).then(data => {
+        if (type === "update-users") {
+            server.unlockBill(billData, selectedValues).then(data => {
                 onRequestClose()
                 updateWindow()
             })
@@ -61,20 +80,38 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                     updateWindow()
                 })
             }
+        } else if (type === "item-users") {
+            if (add) {
+                setUserValues([...userValues, ...selectedValues.map(user => [user, 0])])
+                onRequestClose()
+            } else {
+                setUserValues(userValues.filter(user => !selectedValues.includes(user[0])))
+                onRequestClose()
+            }
+        } else if (type === "users") {
+            if (add) {
+                setUserValues([...userValues, ...selectedValues])
+                onRequestClose()
+            } else {
+                setUserValues(userValues.filter(user => !selectedValues.includes(user)))
+                onRequestClose()
+            }
         } else {
             if (add) {
                 setUserValues([...userValues, ...selectedValues])
                 onRequestClose()
             } else {
-                setUserValues(userValues.filter(item => !selectedValues.includes(item)))
+                setUserValues(userValues.filter(value => !selectedValues.includes(value)))
                 onRequestClose()
             }
         }
     }
 
+    const typeContent = type.endsWith("users") ? "Users" : type.charAt(0).toUpperCase() + type.slice(1)
+
     return (
         <>
-            <h3>Select {type.charAt(0).toUpperCase() + type.slice(1)} to be {type === "users" ? "Requested" : (add ? "Added" : "Removed")}:</h3>
+            <h3>Select {typeContent} to be {type === "update-users" ? "Requested" : (add ? "Added" : "Removed")}:</h3>
             <div className={"group"} style={{width: "auto", justifyContent: "center", margin: "10px"}}>
             {values.map((value, itr) => {
                 return (

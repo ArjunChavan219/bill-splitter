@@ -41,9 +41,9 @@ export default class Server {
         })
     }
 
-    async postRequest(endpoint, method, body) {
+    async postRequest(endpoint, body) {
         const requestOptions = {
-			method: method,
+			method: "POST",
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(body)
 		}
@@ -56,7 +56,7 @@ export default class Server {
                 window.localStorage.removeItem("BUE-user-bills")
                 window.localStorage.removeItem("BUE-all-bills")
             }
-            if (endpoint === "unlock-bill") {
+            if (endpoint === "unlock-bill" || endpoint === "save-bill") {
                 window.localStorage.removeItem(`BUE-manage-bill-${body.bill.replace(" ", "_")}`)
             }
             if (endpoint === "remove-user-bills") {
@@ -76,7 +76,7 @@ export default class Server {
     }
 
     async changePassword(password) {
-        return this.postRequest("password", "POST", {
+        return this.postRequest("password", {
             username: this.user.username,
             password: password
         })
@@ -95,7 +95,9 @@ export default class Server {
     }
 
     async getBills() {
-        return this.getRequest("bills")
+        return this.getRequest("bills", {
+            userGroup: this.user.userGroup
+        })
     }
 
     async getBill(bill) {
@@ -106,7 +108,7 @@ export default class Server {
 
     async getUserBills() {
         return this.getRequest("user-bills", {
-            username: this.user.username 
+            username: this.user.username
         })
     }
 
@@ -118,21 +120,21 @@ export default class Server {
     }
 
     async addUserBills(bills) {
-        return this.postRequest("add-user-bills", "POST", {
+        return this.postRequest("add-user-bills", {
             username: this.user.username,
             bills: bills
         })
     }
 
     async removeUserBills(bills) {
-        return this.postRequest("remove-user-bills", "POST", {
+        return this.postRequest("remove-user-bills", {
             username: this.user.username,
             bills: bills
         })
     }
 
     async updateUserBill(bill, items) {
-        return this.postRequest("update-user-bill", "POST", {
+        return this.postRequest("update-user-bill", {
             bill: bill,
             username: this.user.username,
             items: items
@@ -140,14 +142,14 @@ export default class Server {
     }
 
     async lockUserBill(bill) {
-        return this.postRequest("lock-user-bill", "POST", {
+        return this.postRequest("lock-user-bill", {
             bill: bill,
             username: this.user.username
         })
     }
 
     async unlockBill(bill, users) {
-        return this.postRequest("unlock-bill", "POST", {
+        return this.postRequest("unlock-bill", {
             bill: bill,
             users: users
         })
@@ -163,10 +165,24 @@ export default class Server {
         })
     }
 
-    async saveBill(bill, items) {
-        return this.postRequest("save-bill", "POST", {
+    async saveBill(bill, items, newUsers, oldUsers) {
+        return this.postRequest("save-bill", {
             bill: bill,
-            items: items
+            items: items,
+            newUsers: newUsers,
+            oldUsers: oldUsers
+        })
+    }
+
+    async submitBill(bill) {
+        return this.postRequest("submit-bill", {
+            bill: bill
+        })
+    }
+
+    async getUsers(group) {
+        return this.getRequest("users", {
+            group: group
         })
     }
 }

@@ -68,6 +68,34 @@ main {
   content: '-';
 }
 
+.add-mini-button {
+  font-size: small;
+  width: 25px;
+  height: 25px;
+  margin: 0 0 3px;
+  background-color:#2ecc71;
+}
+.add-mini-button:hover {
+  background-color:#129d4c;
+}
+.add-mini-button:hover span {
+  padding-right: 0px;
+}
+
+.remove-mini-button {
+  font-size: small;
+  width: 25px;
+  height: 25px;
+  margin: 0 0 3px;
+  background-color:#db784d;
+}
+.remove-mini-button:hover {
+  background-color:#e14f1f;
+}
+.remove-mini-button:hover span {
+  padding-right: 0px;
+}
+
 .save-button {
   background-color:#4d8ddb;
 }
@@ -151,12 +179,28 @@ main {
   flex-basis: 10%;
   text-align: center;
 }
-.responsive-table .col-4 {
+.responsive-table .col-icon {
+  flex-basis: 2.5%;
+  text-align: center;
+  margin: auto;
+}
+.responsive-table .col-share {
+  flex-basis: 5%;
+  text-align: center;
+  margin: auto;
+}
+.responsive-table .col-status {
+  flex-basis: 10%;
+  text-align: center;
+  overflow: auto;
+}
+.responsive-table .col-item {
   flex-basis: 30%;
   text-align: center;
+  margin: auto;
 }
-.responsive-table .col-5 {
-  flex-basis: 70%;
+.responsive-table .col-shares {
+  flex-basis: 60%;
   text-align: center;
   overflow: auto;
 }
@@ -186,4 +230,19 @@ select {
 input[type=number] {
   margin-left: 5px;
   text-align: right;
+}
+
+
+.divFlex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexCol {
+  flex-direction: column;
+}
+
+.flexRow {
+  flex-direction: row;
 }
