@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 
 import Server from "../routes/Server"
+import { Encrypt, Decrypt } from "../permissions/Encryption"
 
 
 const AuthContext = createContext(null)
@@ -9,25 +10,27 @@ const AuthContext = createContext(null)
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
     const location = useLocation()
-    const userState = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
-        username: "",
-        permissions: []
+
+    function getUserState() {
+        let existingState = window.localStorage?.getItem("USER_STATE")
+        return existingState ? Decrypt(existingState) : {
+            username: "",
+            permissions: []
+        }
     }
-    const [user, setUser] = useState(userState)
+    
+    const [user, setUser] = useState(getUserState())
 
     useEffect(() => {
-        window.localStorage.setItem("USER_STATE", JSON.stringify(user))
+        window.localStorage.setItem("USER_STATE", Encrypt(user))
     }, [user])
 
     function handlePageChange() {
-        setUser(JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
-            username: "",
-            permissions: []
-        })
+        setUser(getUserState())
     }
 
     useEffect(() => {
-        if (!window.localStorage?.getItem("USER_STATE") || JSON.parse(window.localStorage?.getItem("USER_STATE")).username === "") {
+        if (!window.localStorage?.getItem("USER_STATE") || Decrypt(window.localStorage?.getItem("USER_STATE")).username === "") {
             Object.keys(window.localStorage).forEach(key => {
                 if (key.startsWith("BUE-")) {
                     window.localStorage.removeItem(key)

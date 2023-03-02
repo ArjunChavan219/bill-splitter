@@ -1,4 +1,22 @@
+import { Encrypt, Decrypt } from "../permissions/Encryption"
+
 const apiURL = process.env.REACT_APP_API_URL
+const cacheEndpoints = new Set(["user", "users", "bill", "bills", "user-bill", "user-bills", "all-bills", "manage-bill"])
+const expirableEndpoints = new Set(["user-bill", "user-bills", "all-bills", "manage-bill"])
+
+function cache(cacheKey, isExpirable) {
+    const cacheValue = window.localStorage?.getItem(cacheKey)
+    if (!cacheValue) {
+        return cacheValue
+    }
+    const {ttl, response} = JSON.parse(cacheValue)
+
+    if (!isExpirable || ttl > new Date().getTime()) {
+        return Decrypt(response)
+    }
+    return null
+
+}
 
 export default class Server {
     constructor(user, handlePageChange) {
@@ -17,17 +35,17 @@ export default class Server {
 
     async getRequest(endpoint, params) {
         const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
-        const cacheAble = ["user-bill", "user-bills", "all-bills", "manage-bill"].includes(endpoint)
-        let cacheKey;
+        const cacheAble = cacheEndpoints.has(endpoint)
+        let cacheKey
         if (cacheAble) {
             cacheKey = `BUE-${endpoint}`
             if (endpoint === "user-bill" || endpoint === "manage-bill") {
                 cacheKey += `-${params.bill.replace(" ", "_")}`
             }
 
-            const cacheResponse = window.localStorage?.getItem(cacheKey)
+            const cacheResponse = cache(cacheKey, expirableEndpoints.has(endpoint))
             if (cacheResponse) {
-                return JSON.parse(cacheResponse)
+                return cacheResponse
             }
         }
 
@@ -35,7 +53,10 @@ export default class Server {
 			res => res.json()
 		).then(data => {
             if (cacheAble) {
-                window.localStorage.setItem(cacheKey, JSON.stringify(data))
+                window.localStorage.setItem(cacheKey, JSON.stringify({
+                    ttl: 900000 + new Date().getTime(),
+                    response: Encrypt(data)
+                }))
             }
             return data
         })
@@ -48,9 +69,7 @@ export default class Server {
 			body: JSON.stringify(body)
 		}
 		return fetch(`${this.url}/${endpoint}`, requestOptions).then(res => {
-            if (endpoint === "password") {
-                window.localStorage.removeItem("BUE-login")
-            } else if (endpoint === "update-user-bill") {
+            if (endpoint === "update-user-bill") {
                 window.localStorage.removeItem(`BUE-user-bill-${body.bill.replace(" ", "_")}`)
             } else {
                 window.localStorage.removeItem("BUE-user-bills")
