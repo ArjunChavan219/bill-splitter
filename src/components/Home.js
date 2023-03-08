@@ -25,7 +25,7 @@ function Home() {
         
         server.login(username, password).then(data => {
             if (data.success) {
-                login(username)
+                login(username, data.userGroup, data.token)
             } else {
                 setError(data.error)
             }

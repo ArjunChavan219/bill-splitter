@@ -42,15 +42,13 @@ export const AuthProvider = ({ children }) => {
 
     const server = new Server(user, handlePageChange)
 
-    const login = (user) => {
-        server.permission(user).then(data => {
-            if (data.userGroup === "admin") {
-                setUser({ username: user, permissions: ["view_admin", "view_about"], userGroup: data.userGroup })
-            } else {
-                setUser({ username: user, permissions: ["view_about"], userGroup: data.userGroup })
-            }
-            navigate("/user", { replace: true })
-        })
+    const login = (user, userGroup, token) => {
+        if (userGroup === "admin") {
+            setUser({ username: user, permissions: ["view_admin", "view_about"], userGroup: userGroup, token: token })
+        } else {
+            setUser({ username: user, permissions: ["view_about"], userGroup: userGroup, token: token })
+        }
+        navigate("/user", { replace: true })
     }
     const logout = () => {
         setUser({ username: "", permissions: [] })

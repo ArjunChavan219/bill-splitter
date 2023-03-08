@@ -25,21 +25,20 @@ export default class Server {
         this.handlePageChange = handlePageChange
     }
 
-    session_check() {
-        const current_user = JSON.parse(window.localStorage?.getItem("USER_STATE")) || {
-            username: "",
-            permissions: []
-        }
-        return JSON.stringify(current_user) !== JSON.stringify(this.user)
-    }
-
     async getRequest(endpoint, params) {
+        const requestOptions = {
+			method: "GET",
+			headers: {
+                'x-access-token': this.user.token,
+                'x-access-user': this.user.username
+            }
+		}
         const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
         const cacheAble = cacheEndpoints.has(endpoint)
         let cacheKey
         if (cacheAble) {
             cacheKey = `BUE-${endpoint}`
-            if (endpoint === "user-bill" || endpoint === "manage-bill") {
+            if (endpoint === "user-bill" || endpoint === "manage-bill" || endpoint === "bill") {
                 cacheKey += `-${params.bill.replace(" ", "_")}`
             }
 
@@ -49,7 +48,7 @@ export default class Server {
             }
         }
 
-        return fetch(request).then(
+        return fetch(request, requestOptions).then(
 			res => res.json()
 		).then(data => {
             if (cacheAble) {
@@ -65,7 +64,11 @@ export default class Server {
     async postRequest(endpoint, body) {
         const requestOptions = {
 			method: "POST",
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': this.user.token,
+                'x-access-user': this.user.username
+            },
 			body: JSON.stringify(body)
 		}
 		return fetch(`${this.url}/${endpoint}`, requestOptions).then(res => {
@@ -98,12 +101,6 @@ export default class Server {
         return this.postRequest("password", {
             username: this.user.username,
             password: password
-        })
-    }
-
-    async permission(user) {
-        return this.getRequest("permission", {
-            username: user
         })
     }
 
