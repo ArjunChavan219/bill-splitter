@@ -45,7 +45,7 @@ function Button() {
 
 const Login = () => {
     const [error, setError] = useState("")
-    const { user, login, server } = useAuth()
+    const { user, login, server, serverDown } = useAuth()
 
     if (user.username) {
         return <Navigate to="/user" replace />
@@ -63,6 +63,8 @@ const Login = () => {
             } else {
                 setError(data.error)
             }
+        }).catch(err => {
+            serverDown()
         })
     }
 

@@ -1,13 +1,14 @@
 import React from "react"
 import { Routes, Route } from "react-router-dom"
 
-import About from "../components/About"
+// import About from "../components/About"
 import Bill from "../components/Bill"
-import ManageBill from "../components/ManageBill"
+import Dashboard from "../components/Dashboard"
 import Home from "../components/Home"
 import Manage from "../components/Manage"
+import ManageBill from "../components/ManageBill"
 import PageNotFound from "../components/PageNotFound"
-import Dashboard from "../components/Dashboard"
+import ServerDown from "../components/ServerDown"
 import User from "../components/User"
 
 import Authentication from "./Authentication"
@@ -23,18 +24,19 @@ function RoutePath() {
             {/* <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ABOUT]} />}>
                 <Route path="about" element={<About />} />
             </Route> */}
-                <Route path="user" element={
-                    <Authentication>
-                        <User />
-                    </Authentication>
-                }>
-                    <Route index element={<Dashboard />}/>
-                    <Route path="bill" element={<Bill />} />
-                    <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ADMIN]} />}>
-                        <Route path="manage" element={<Manage />} />
-                        <Route path="manage-bill" element={<ManageBill />} />
-                    </Route>
+            <Route path="user" element={
+                <Authentication>
+                    <User />
+                </Authentication>
+            }>
+                <Route index element={<Dashboard />}/>
+                <Route path="bill" element={<Bill />} />
+                <Route element={<Authorization permissions={[PERMISSIONS.CAN_VIEW_ADMIN]} />}>
+                    <Route path="manage" element={<Manage />} />
+                    <Route path="manage-bill" element={<ManageBill />} />
                 </Route>
+            </Route>
+            <Route path="down" element={<ServerDown />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>
     )

@@ -6,7 +6,7 @@ import "../../styles/Checkbox.css"
 
 
 const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) => {
-    const { server } = useAuth()
+    const { server, serverDown } = useAuth()
     const [values, setValues] = useState([])
     const [valueChecked, setValueChecked] = useState([])
     let billData, userValues, setUserValues;
@@ -35,6 +35,8 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                 finalValues = data.bills.filter(bill => !userValues.includes(bill))
                 setValues(finalValues)
                 setValueChecked(new Array(finalValues.length).fill(false))
+            }).catch(err => {
+                serverDown()
             })
         } else if (type === "item-users") {
             const userValueNames = userValues.map(user => user[0])
@@ -46,6 +48,8 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                 finalValues = data.users.filter(user => !userValues.includes(user))
                 setValues(finalValues)
                 setValueChecked(new Array(finalValues.length).fill(false))
+            }).catch(err => {
+                serverDown()
             })
         } else {
             server.getBill(billData).then(data => {
@@ -53,6 +57,8 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
                 finalValues = data.items.filter(item => !userValueNames.includes(item.name))
                 setValues(finalValues)
                 setValueChecked(new Array(finalValues.length).fill(false))
+            }).catch(err => {
+                serverDown()
             })
         }
     }, [])
@@ -67,17 +73,23 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
             server.unlockBill(billData, selectedValues).then(data => {
                 onRequestClose()
                 updateWindow()
+            }).catch(err => {
+                serverDown()
             })
         } else if (type === "bills") {
             if (add) {
                 server.addUserBills(selectedValues).then(data => {
                     onRequestClose()
                     updateWindow()
+                }).catch(err => {
+                    serverDown()
                 })
             } else {
                 server.removeUserBills(selectedValues).then(data => {
                     onRequestClose()
                     updateWindow()
+                }).catch(err => {
+                    serverDown()
                 })
             }
         } else if (type === "item-users") {

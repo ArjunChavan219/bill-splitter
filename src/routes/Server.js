@@ -90,6 +90,12 @@ export default class Server {
         })
     }
 
+    async pingServer() {
+        return fetch(`${this.url}/ping`)
+            .then(res => true)
+            .catch(err => false)
+    }
+
     async login(username, password) {
         return this.getRequest("login", {
             username: username,

@@ -24,12 +24,14 @@ function BillData({ data }) {
 
 
 const Manage = () => {
-    const { server } = useAuth()
+    const { server, serverDown } = useAuth()
     const [allBills, setAllBills] = useState([])
 
     function updateBills() {
         server.getAllBills().then(data => {
             setAllBills(data.bills)
+        }).catch(err => {
+            serverDown()
         })
     }
 

@@ -115,7 +115,7 @@ const ManageBill = () => {
     const { name } = location.state
     const billName = name.slice(0, -9)
     const billDate = name.slice(-8)
-    const { server } = useAuth()
+    const { server, serverDown } = useAuth()
     const [billItems, setBillItems] = useState([])
     const [billUsers, setBillUsers] = useState([])
     const [saved, setSaved] = useState(true)
@@ -161,6 +161,8 @@ const ManageBill = () => {
         server.saveBill(name, billItems, addUsers, removeUsers).then(data => {
             setSaved(true)
             oldUsers.current = newUsers
+        }).catch(err => {
+            serverDown()
         })
     }
 
@@ -171,6 +173,8 @@ const ManageBill = () => {
     function submitBill() {
         server.submitBill(name).then(data => {
             closePage()
+        }).catch(err => {
+            serverDown()
         })
     }
 
@@ -187,6 +191,8 @@ const ManageBill = () => {
             setBillUsers(data.users)
             billGroup.current = data.group
             oldUsers.current = new Set(data.users)
+        }).catch(err => {
+            serverDown()
         })
     }, [])
 

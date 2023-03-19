@@ -9,7 +9,7 @@ import "../styles/Dashboard.css"
 
 
 const Dashboard = () => {
-    const { server } = useAuth()
+    const { server, serverDown } = useAuth()
     const [userBills, setUserBills] = useState([])
 
     useEffect(() => {
@@ -20,6 +20,8 @@ const Dashboard = () => {
     function updateBills() {
         server.getUserBills().then(data => {
             setUserBills(data.bills)
+        }).catch(err => {
+            serverDown()
         })
     }
 

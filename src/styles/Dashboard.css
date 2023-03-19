@@ -179,6 +179,10 @@ main {
   flex-basis: 10%;
   text-align: center;
 }
+.responsive-table .col-4 {
+  flex-basis: 30%;
+  text-align: center;
+}
 .responsive-table .col-icon {
   flex-basis: 2.5%;
   text-align: center;

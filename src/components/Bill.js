@@ -154,25 +154,31 @@ const Bill = () => {
     const { name } = location.state
     const billName = name.slice(0, -9)
     const billDate = name.slice(-8)
-    const { server } = useAuth()
+    const { server, serverDown } = useAuth()
     const [userItems, setUserItems] = useState([])
     const [saved, setSaved] = useState(false)
 
     function updateItems() {
         server.getUserBill(name).then(data => {
             setUserItems(data.items)
+        }).catch(err => {
+            serverDown()
         })
     }
 
     function saveItems() {
         server.updateUserBill(name, userItems).then(data => {
             setSaved(true)
+        }).catch(err => {
+            serverDown()
         })
     }
 
     function submit() {
         server.lockUserBill(name).then(data => {
             navigate("/user", {replace: true})
+        }).catch(err => {
+            serverDown()
         })
     }
 

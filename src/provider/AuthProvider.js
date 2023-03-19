@@ -29,13 +29,17 @@ export const AuthProvider = ({ children }) => {
         setUser(getUserState())
     }
 
+    function clearCache() {
+        Object.keys(window.localStorage).forEach(key => {
+            if (key.startsWith("BUE-")) {
+                window.localStorage.removeItem(key)
+            }
+        })
+    }
+
     useEffect(() => {
         if (!window.localStorage?.getItem("USER_STATE") || Decrypt(window.localStorage?.getItem("USER_STATE")).username === "") {
-            Object.keys(window.localStorage).forEach(key => {
-                if (key.startsWith("BUE-")) {
-                    window.localStorage.removeItem(key)
-                }
-            })
+            clearCache()
         }
         handlePageChange()
     }, [location])
@@ -50,12 +54,18 @@ export const AuthProvider = ({ children }) => {
         }
         navigate("/user", { replace: true })
     }
+
     const logout = () => {
         setUser({ username: "", permissions: [] })
     }
 
+    const serverDown = () => {
+        clearCache()
+        navigate("/down", { replace: true })
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, server }}>
+        <AuthContext.Provider value={{ user, login, logout, server, serverDown }}>
             {children}
         </AuthContext.Provider>
     )

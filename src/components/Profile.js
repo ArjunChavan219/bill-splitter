@@ -8,7 +8,7 @@ const logo = String(require("../assets/blank_profile.png"))
 
 
 const Profile = () => {
-    const { user, logout, server } = useAuth()
+    const { user, logout, server, serverDown } = useAuth()
     const [userData, setUserData] = useState({})
 
     const logoutHandler = () => {
@@ -18,6 +18,8 @@ const Profile = () => {
     useEffect(() => {
         server.getUserData().then(data => {
             setUserData(data)
+        }).catch(err => {
+            serverDown()
         })
     }, [])
 
