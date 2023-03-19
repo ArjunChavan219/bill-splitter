@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import Modal from "react-modal"
 
-import Checkbox from "./Modals/Checkbox"
-import Login from "./Modals/Login"
-import Password from "./Modals/Password"
+import Checkbox from "./Checkbox"
+import Login from "./Login"
+import Password from "./Password"
 
 class ParentModal {
     constructor() {

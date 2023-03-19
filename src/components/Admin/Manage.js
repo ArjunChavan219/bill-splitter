@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
 
 function BillData({ data }) {

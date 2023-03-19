@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
 import Bills from "./Bills"
 import BillsSummary from "./BillsSummary"
-import { AddRemoveModal } from "./Modals"
+import { AddRemoveModal } from "../Modals/Modals"
 
-import "../styles/Dashboard.css"
+import "../../styles/Dashboard.css"
 
 
 const Dashboard = () => {

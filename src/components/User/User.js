@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom"
 
 import Profile from "./Profile"
 
-import "../styles/Dashboard.css"
+import "../../styles/Dashboard.css"
 
 
 const User = () => {

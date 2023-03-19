@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
-import "../styles/ServerDown.css"
+import "../../styles/ServerDown.css"
 
 const ServerDown = () => {
     const { server} = useAuth()

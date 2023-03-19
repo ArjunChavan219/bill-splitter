@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
-import { AddRemoveModal, UpdateUser } from "./Modals"
+import { useAuth } from "../../provider/AuthProvider"
+import { AddRemoveModal, UpdateUser } from "../Modals/Modals"
 
-import Unauthorized from "./Unauthorized"
+import Unauthorized from "..//Errors/Unauthorized"
 
 function UserShare({ itr, shareChange, userShare }) {
     const [share, setShare] = useState(0)

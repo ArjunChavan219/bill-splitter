@@ -1,7 +1,7 @@
 import React from "react"
 import { Navigate, Outlet } from "react-router-dom"
 
-import Unauthorized from "../components/Unauthorized"
+import Unauthorized from "../components/Errors/Unauthorized"
 import { useAuth } from "../provider/AuthProvider"
 
 

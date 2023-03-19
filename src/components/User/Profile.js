@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
-import PERMISSIONS from "../permissions/Permissions"
+import { useAuth } from "../../provider/AuthProvider"
+import PERMISSIONS from "../../permissions/Permissions"
 
-const logo = String(require("../assets/blank_profile.png"))
+const logo = String(require("../../assets/blank_profile.png"))
 
 
 const Profile = () => {

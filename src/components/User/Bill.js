@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
-import { AddRemoveModal, SaveBill } from "./Modals"
-import Unauthorized from "./Unauthorized"
+import { AddRemoveModal, SaveBill } from "../Modals/Modals"
+import Unauthorized from "../Errors/Unauthorized"
 
 
 function TextInput({ shareState, outOf, quantity }) {
