@@ -172,7 +172,7 @@ const ManageBill = () => {
 
     function submitBill() {
         server.submitBill(name).then(data => {
-            closePage()
+            navigate("/user/bill-split", {state: {name: name}, replace: true})
         }).catch(err => {
             serverDown()
         })

@@ -207,4 +207,14 @@ export default class Server {
             group: group
         })
     }
+
+    async billSplit(bill) {
+        return this.getRequest("bill-split", {
+            bill: bill
+        })
+    }
+
+    async allUsers() {
+        return this.getRequest("all-users")
+    }
 }

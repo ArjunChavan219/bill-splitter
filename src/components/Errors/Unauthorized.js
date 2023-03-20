@@ -1,7 +1,19 @@
-import React from "react"
+import React, { useEffect } from "react"
 
+import { useAuth } from "../../provider/AuthProvider"
 
 const Unauthorized = () => {
+    const { server, serverDown } = useAuth()
+    
+    useEffect(() => {
+        server.pingServer().then(res => {
+            if (!res) {
+                serverDown()
+            }
+        })
+        
+    }, [])
+
     return (
         <>
             <br />
