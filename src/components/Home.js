@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+
 import { useAuth } from "../provider/AuthProvider"
 
 import "../styles/Home.css"
@@ -7,13 +8,22 @@ import "../styles/Home.css"
 
 function Home() {
     const [error, setError] = useState("")
-    const { user, login, server } = useAuth()
+    const ifDisplay = useRef(false)
+    const { user, login, server, serverDown } = useAuth()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (user.username) {
-            navigate("/user", { replace: true })
-        }
+        server.pingServer().then(res => {
+            if (!res) {
+                serverDown()
+            } else if (user.username) {
+                navigate("/user", { replace: true })
+            } else {
+                ifDisplay.current = true
+                document.title = "PerePro Login"
+            }
+        })
+        
     }, [])
 
     function handleLogin(event) {
@@ -23,10 +33,12 @@ function Home() {
         
         server.login(username, password).then(data => {
             if (data.success) {
-                login(username)
+                login(username, data.userGroup, data.token)
             } else {
                 setError(data.error)
             }
+        }).catch(err => {
+            serverDown()
         })
     }
 
@@ -35,21 +47,25 @@ function Home() {
     }
 
     return (
-        <div className={"container"} style={{maxWidth: "none"}}>
-            <div className={"top"}></div>
-            <div className={"bottom"}></div>
-            <div className={"center"}>
-                <h2>Please Sign In</h2>
-                <form id="login" onSubmit={handleLogin}>
-                    <input type="username" placeholder="Email" autoComplete="username" className={error === "Username" ? "error" : "normal"} onBlur={onExit}/>
-                    <input type="password" placeholder="Password" autoComplete="password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
-                    <button type="submit" className={"button"}>
-                        Login
-                    </button>
-                </form>
-                <h2>&nbsp;</h2>
+        <>
+            {ifDisplay.current &&
+            <div className={"container"} style={{maxWidth: "none"}}>
+                <div className={"top"}></div>
+                <div className={"bottom"}></div>
+                <div className={"center"}>
+                    <h2>Please Sign In</h2>
+                    <form id="login" onSubmit={handleLogin}>
+                        <input type="username" placeholder="Email" autoComplete="username" className={error === "Username" ? "error" : "normal"} onBlur={onExit}/>
+                        <input type="password" placeholder="Password" autoComplete="password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
+                        <button type="submit" className={"button"}>
+                            Login
+                        </button>
+                    </form>
+                    <h2>&nbsp;</h2>
+                </div>
             </div>
-        </div>
+        }
+        </>
     )
 }
 

@@ -66,7 +66,7 @@ function Button() {
 }
 
 const Password = ({ password, onRequestClose }) => {
-    const { user, login, server } = useAuth()
+    const { user, login, server, serverDown } = useAuth()
     const [error, setError] = useState(0)
     const [newPswd, setnewPswd] = useState("")
     
@@ -77,6 +77,8 @@ const Password = ({ password, onRequestClose }) => {
             if (data.success) {
                 onRequestClose()
             }
+        }).catch(err => {
+            serverDown()
         })
     }
 

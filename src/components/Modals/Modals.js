@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import Modal from "react-modal"
 
-import Checkbox from "./Modals/Checkbox"
-import Login from "./Modals/Login"
-import Password from "./Modals/Password"
+import Checkbox from "./Checkbox"
+import Login from "./Login"
+import Password from "./Password"
 
 class ParentModal {
     constructor() {
@@ -89,68 +89,6 @@ function ChangePassword({ password }) {
     )
 }
 
-function AddBill({ updateBills, userBills }) {
-    const modal = new ParentModal()
-    modal.modalStyle.top = "40%"
-
-    return (
-        <>
-            <MainModal object={modal} buttonClass="add-button" content="Add">
-                <Checkbox type={"bills"} updateWindow={updateBills} onRequestClose={modal.closeModal} userValueState={userBills} add={true}/>
-            </MainModal>
-        </>
-    )
-}
-
-function RemoveBill({ updateBills, userBills }) {
-    const modal = new ParentModal()
-    modal.modalStyle.top = "40%"
-
-    return (
-        <>
-            <MainModal object={modal} buttonClass="remove-button" content="Remove">
-                {userBills.length === 0 ? (
-                        <div>No active bills</div>
-                    ) : (
-                        <Checkbox type={"bills"} updateWindow={updateBills} onRequestClose={modal.closeModal} userValueState={userBills} add={false}/>
-                )}
-                
-            </MainModal>
-        </>
-    )
-}
-
-function AddItem({ updateItems, userItems }) {
-    const modal = new ParentModal()
-    modal.modalStyle.top = "40%"
-
-    return (
-        <>
-            <MainModal object={modal} buttonClass="add-button" content="Add">
-                <Checkbox type={"items"} updateWindow={updateItems} onRequestClose={modal.closeModal} userValueState={userItems} add={true}/>
-            </MainModal>
-        </>
-    )
-}
-
-function RemoveItem({ updateItems, userItems }) {
-    const modal = new ParentModal()
-    modal.modalStyle.top = "40%"
-
-    return (
-        <>
-            <MainModal object={modal} buttonClass="remove-button" content="Remove">
-                {userItems.length === 0 ? (
-                        <div>No active items</div>
-                    ) : (
-                        <Checkbox type={"items"} updateWindow={updateItems} onRequestClose={modal.closeModal} userValueState={userItems} add={false}/>
-                )}
-                
-            </MainModal>
-        </>
-    )
-}
-
 function SaveBill() {
     const modal = new ParentModal()
     
@@ -182,7 +120,26 @@ function UpdateUser({ closePage, userState }) {
     return (
         <>
             <MainModal object={modal} buttonClass="submit-button" content="Change">
-                <Checkbox type={"users"} updateWindow={closePage} onRequestClose={modal.closeModal} userValueState={userState}/>
+                <Checkbox type={"update-users"} updateWindow={closePage} onRequestClose={modal.closeModal} userValueState={userState}/>
+            </MainModal>
+        </>
+    )
+}
+
+function AddRemoveModal({ update, user, type, add }) {
+    const modal = new ParentModal()
+    modal.modalStyle.top = "40%"
+    const content = type === "item-users" ? (add ? "+" : "-") : (add ? "Add" : "Remove")
+    const buttonClass = (add ? "add" : "remove") + (type === "item-users" ? "-mini" : "")
+
+    return (
+        <>
+            <MainModal object={modal} buttonClass={`${buttonClass}-button`} content={content}>
+                { (add || user[0].length !== 0) ? (
+                    <Checkbox type={type} updateWindow={update} onRequestClose={modal.closeModal} userValueState={user} add={add}/>
+                ) : (
+                    <div>No active {type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                )}
             </MainModal>
         </>
     )
@@ -190,4 +147,4 @@ function UpdateUser({ closePage, userState }) {
 
 Modal.setAppElement("#root")
 
-export { SignUp, LoginDiv, ChangePassword, AddBill, RemoveBill, AddItem, RemoveItem, SaveBill, UpdateUser }
+export { SignUp, LoginDiv, ChangePassword, SaveBill, UpdateUser, AddRemoveModal }

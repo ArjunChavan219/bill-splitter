@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react"
 
-const billImage = String(require("../assets/bill.png"))
-const pendingImage = String(require("../assets/pending.png"))
-const cashImage = String(require("../assets/cash.png"))
+const billImage = String(require("../../assets/bill.png"))
+const pendingImage = String(require("../../assets/pending.png"))
+const cashImage = String(require("../../assets/cash.png"))
 
 const Block = ({ bg, image, alt, size, value, text }) => {
     return (

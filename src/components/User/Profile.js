@@ -1,38 +1,53 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
-import PERMISSIONS from "../permissions/Permissions"
+import { useAuth } from "../../provider/AuthProvider"
+import PERMISSIONS from "../../permissions/Permissions"
 
-const logo = String(require("../assets/blank_profile.png"))
+const logo = String(require("../../assets/blank_profile.png"))
 
 
 const Profile = () => {
-    const { user, logout, server } = useAuth()
+    const { user, logout, server, serverDown } = useAuth()
     const [userData, setUserData] = useState({})
+    const menuRef = useRef(null)
 
     const logoutHandler = () => {
         logout()
     }
 
+    const closeDropdown = () => {
+        menuRef.current.removeAttribute("open")
+    }
+
     useEffect(() => {
         server.getUserData().then(data => {
             setUserData(data)
+        }).catch(err => {
+            serverDown()
         })
     }, [])
-
-    const userLogo = (<>
-        <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>
-            <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
-        </span>
-    </>)
 
     return (
         <div className={"flex items-center h-20 px-6 sm:px-10 bg-white"}>
             <Link to="/user"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></Link>
             <div className={"flex flex-shrink-0 items-center ml-auto"}>
                 <span className={"font-semibold"}>{userData.firstName} {userData.lastName}</span>
-                {user.permissions.includes(PERMISSIONS.CAN_VIEW_ADMIN) ? (<Link style={{display: "flex"}} to="/user/manage">{userLogo}</Link>) : userLogo}
+                <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>
+                    <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
+                </span>
+                {user.permissions.includes(PERMISSIONS.CAN_VIEW_ADMIN) && <Link style={{display: "flex"}} to="/user/manage"></Link>}
+                <div className="body">
+                    <details ref={menuRef} className="dropdown">
+                        <summary role="button">
+                            <i className="fa fa-chevron-down" aria-hidden="true" style={{color: "#afafaf"}}></i>
+                        </summary>
+                        <ul onClick={closeDropdown}>
+                            <li><Link to="/user/manage">Bill Split</Link></li>
+                            <li><Link to="/user/user-split">User Split</Link></li>
+                        </ul>
+                    </details>
+                </div>
                 <div className={"border-l pl-3 ml-3 space-x-1"}>
                     <button className={"relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 focus:text-gray-600 rounded-full"} onClick={logoutHandler}>
                         <span className={"sr-only"}>Log out</span>

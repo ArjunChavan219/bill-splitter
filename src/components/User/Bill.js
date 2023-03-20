@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-import { useAuth } from "../provider/AuthProvider"
+import { useAuth } from "../../provider/AuthProvider"
 
-import { AddItem, RemoveItem, SaveBill } from "./Modals"
-import Unauthorized from "./Unauthorized"
+import { AddRemoveModal, SaveBill } from "../Modals/Modals"
+import Unauthorized from "../Errors/Unauthorized"
 
 
 function TextInput({ shareState, outOf, quantity }) {
@@ -154,25 +154,31 @@ const Bill = () => {
     const { name } = location.state
     const billName = name.slice(0, -9)
     const billDate = name.slice(-8)
-    const { server } = useAuth()
+    const { server, serverDown } = useAuth()
     const [userItems, setUserItems] = useState([])
     const [saved, setSaved] = useState(false)
 
     function updateItems() {
         server.getUserBill(name).then(data => {
             setUserItems(data.items)
+        }).catch(err => {
+            serverDown()
         })
     }
 
     function saveItems() {
         server.updateUserBill(name, userItems).then(data => {
             setSaved(true)
+        }).catch(err => {
+            serverDown()
         })
     }
 
     function submit() {
         server.lockUserBill(name).then(data => {
             navigate("/user", {replace: true})
+        }).catch(err => {
+            serverDown()
         })
     }
 
@@ -211,12 +217,12 @@ const Bill = () => {
                         </div>
                     )}
                     <div className="btnDiv">
-                        <AddItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                        <AddRemoveModal user={[userItems, setUserItems, name]} type={"items"} add={true} />
                         {userItems.length !== 0 && (<>
                             {!saved && <button onClick={saveItems} className={`manage-button save-button`}><span>Save</span></button>}
                             {saved && (<><SaveBill /><button onClick={submit} className={`manage-button submit-button`}><span>Submit</span></button></>)}
                         </>)}
-                        <RemoveItem updateItems={updateItems} userItems={[name, userItems, setUserItems]} />
+                        <AddRemoveModal user={[userItems, setUserItems, name]} type={"items"} add={false} />
                     </div>
                 </div>
             </div>
