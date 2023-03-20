@@ -1,6 +1,6 @@
 /* Dashboard CSS URL */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.8.12/tailwind-experimental.min.css');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 
 main {
   padding: 20px;
@@ -79,6 +79,34 @@ main {
   background-color:#129d4c;
 }
 .add-mini-button:hover span {
+  padding-right: 0px;
+}
+
+.calculate-mini-button {
+  font-size: small;
+  width: 25px;
+  height: 25px;
+  margin: 0 0 3px;
+  background-color:#1a5edd;
+}
+.calculate-mini-button:hover {
+  background-color:#1a3bdd;
+}
+.calculate-mini-button:hover span {
+  padding-right: 0px;
+}
+
+.clear-mini-button {
+  font-size: small;
+  width: 25px;
+  height: 25px;
+  margin: 0 0 3px;
+  background-color:#de3b3b;
+}
+.clear-mini-button:hover {
+  background-color:#da1010;
+}
+.clear-mini-button:hover span {
   padding-right: 0px;
 }
 
@@ -204,7 +232,7 @@ main {
   margin: auto;
 }
 .responsive-table .col-status {
-  flex-basis: 10%;
+  flex-basis: 12.5%;
   text-align: center;
   overflow: auto;
 }
@@ -214,7 +242,7 @@ main {
   margin: auto;
 }
 .responsive-table .col-shares {
-  flex-basis: 60%;
+  flex-basis: 57.5%;
   text-align: center;
   overflow: auto;
 }
@@ -345,7 +373,7 @@ a.button:active {
   z-index: 2;
   
   background: var(--dropdown-background);
-  border-radius: 6px;
+  border-radius: 10px;
   list-style: none;
 }
 
@@ -361,7 +389,6 @@ a.button:active {
   box-sizing: border-box;
   color: var(--dropdown-color);
   text-decoration: none;
-  text-align: center;
 }
 
 .dropdown ul li a:hover {

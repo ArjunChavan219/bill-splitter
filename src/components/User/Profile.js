@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { useAuth } from "../../provider/AuthProvider"
@@ -10,9 +10,14 @@ const logo = String(require("../../assets/blank_profile.png"))
 const Profile = () => {
     const { user, logout, server, serverDown } = useAuth()
     const [userData, setUserData] = useState({})
+    const menuRef = useRef(null)
 
     const logoutHandler = () => {
         logout()
+    }
+
+    const closeDropdown = () => {
+        menuRef.current.removeAttribute("open")
     }
 
     useEffect(() => {
@@ -23,10 +28,6 @@ const Profile = () => {
         })
     }, [])
 
-    const userLogo = (<>
-        
-    </>)
-
     return (
         <div className={"flex items-center h-20 px-6 sm:px-10 bg-white"}>
             <Link to="/user"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></Link>
@@ -36,15 +37,15 @@ const Profile = () => {
                     <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
                 </span>
                 {user.permissions.includes(PERMISSIONS.CAN_VIEW_ADMIN) && <Link style={{display: "flex"}} to="/user/manage"></Link>}
-                <div class="body">
-                    <details class="dropdown">
+                <div className="body">
+                    <details ref={menuRef} className="dropdown">
                         <summary role="button">
                             <i className="fa fa-chevron-down" aria-hidden="true" style={{color: "#afafaf"}}></i>
                         </summary>
-                        <ul>
-                        <li><Link style={{display: "flex"}} to="/user/manage">Bill Split</Link></li>
-                        <li><Link style={{display: "flex"}} to="/user/user-split">User Split</Link></li>
-                    </ul>
+                        <ul onClick={closeDropdown}>
+                            <li><Link to="/user/manage">Bill Split</Link></li>
+                            <li><Link to="/user/user-split">User Split</Link></li>
+                        </ul>
                     </details>
                 </div>
                 <div className={"border-l pl-3 ml-3 space-x-1"}>

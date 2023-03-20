@@ -6,8 +6,12 @@ import { AddRemoveModal, UpdateUser } from "../Modals/Modals"
 
 import Unauthorized from "..//Errors/Unauthorized"
 
-function UserShare({ itr, shareChange, userShare }) {
+function UserShare({ itr, shareChange, users }) {
     const [share, setShare] = useState(0)
+
+    useEffect(() => {
+        setShare(users[itr][1])
+    }, [users])
 
     function changeShare(event) {
         setShare(event.target.value)
@@ -18,8 +22,8 @@ function UserShare({ itr, shareChange, userShare }) {
 
     return (
         <div className="divFlex flexCol">
-            <label style={{margin: "0 10px"}}>{userShare[0]}</label>
-            <input type="number" defaultValue={userShare[1]} min={0.01} max={1} step={0.01}
+            <label style={{margin: "0 10px"}}>{users[itr][0]}</label>
+            <input type="number" value={share} min={0.01} max={1} step={0.01}
              style={{textAlign: "center", width: "auto"}} onChange={changeShare} onBlur={saveShare}/>
         </div>
     )
@@ -37,7 +41,7 @@ function ItemData({ itemData, updateBill, billUsers }) {
             sum += parseFloat(user[1])
         })
 
-        return sum
+        return sum.toFixed(2)
     }, [users])
     const saveItem = () => {
         setSaved(true)
@@ -81,23 +85,40 @@ function ItemData({ itemData, updateBill, billUsers }) {
         setSaved(false)
     }
 
+    function calculateShare() {
+        const commonShare = (1/users.length).toFixed(2)
+        setUsers(users.map( user => {
+            return [user[0], commonShare]
+        }));
+    }
+
+    function clearShare() {
+        setUsers(users.map( user => {
+            return [user[0], 0]
+        }));
+    }
+
     return (
         <li className="table-row" style={{padding: "7.5px 30px"}}>
             <div className="col col-item">{item}</div>
             <div className="col col-icon">{itemStatus}</div>
             <div className="col col-share">{totalShare}</div>
-            <div className="col col-icon">
+            <div className="col col-share divFlex flexrow">
                 <div className="divFlex flexCol">
                     <AddRemoveModal user={[users, setUsers, billUsers]}
                     type={"item-users"} add={true} />
                     <AddRemoveModal user={[users, setUsers, billUsers]}
                     type={"item-users"} add={false}/>
                 </div>
+                <div className="divFlex flexCol">
+                    <button onClick={calculateShare} className={`manage-button calculate-mini-button`}><i className="fa fa-calculator" aria-hidden="true"/></button>
+                    <button onClick={clearShare} className={`manage-button clear-mini-button`}><i className="fa fa-refresh" aria-hidden="true"/></button>
+                </div>
             </div>
             <div className="col col-shares">
                 <div  className="divFlex flexRow">
                     {users.map((userShare, keyItr) => (<UserShare key={keyItr} itr={keyItr}
-                     shareChange={shareChange} userShare={userShare}/>))}
+                     shareChange={shareChange} users={users}/>))}
                 </div>
             </div>
         </li>
