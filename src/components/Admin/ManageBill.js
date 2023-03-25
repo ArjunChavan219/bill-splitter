@@ -41,7 +41,7 @@ function ItemData({ itemData, updateBill, billUsers }) {
             sum += parseFloat(user[1])
         })
 
-        return sum.toFixed(2)
+        return parseFloat(sum.toFixed(2))
     }, [users])
     const saveItem = () => {
         setSaved(true)
@@ -86,16 +86,18 @@ function ItemData({ itemData, updateBill, billUsers }) {
     }
 
     function calculateShare() {
-        const commonShare = (1/users.length).toFixed(2)
+        const commonShare = parseFloat((1/users.length).toFixed(2))
         setUsers(users.map( user => {
             return [user[0], commonShare]
-        }));
+        }))
+        setSaved(false)
     }
 
     function clearShare() {
         setUsers(users.map( user => {
             return [user[0], 0]
-        }));
+        }))
+        setSaved(false)
     }
 
     return (
@@ -145,7 +147,7 @@ const ManageBill = () => {
     const oldUsers = useRef(new Set())
 
     const activeUsers = useMemo(() => {
-        const data = billItems.reduce((a, b) => [...new Set([...a, ...b.users.map(user => user.username)])], []);
+        const data = billItems.reduce((a, b) => [...new Set([...a, ...b.users.map(user => user.username)])], [])
         return data
     }, [billItems])
 

@@ -8,7 +8,7 @@ import "../styles/Home.css"
 
 function Home() {
     const [error, setError] = useState("")
-    const ifDisplay = useRef(false)
+    const [ifDisplay, setIfDisplay] = useState(false)
     const { user, login, server, serverDown } = useAuth()
     const navigate = useNavigate()
 
@@ -19,7 +19,7 @@ function Home() {
             } else if (user.username) {
                 navigate("/user", { replace: true })
             } else {
-                ifDisplay.current = true
+                setIfDisplay(true)
                 document.title = "PerePro Login"
             }
         })
@@ -48,7 +48,7 @@ function Home() {
 
     return (
         <>
-            {ifDisplay.current &&
+            {ifDisplay &&
             <div className={"container"} style={{maxWidth: "none"}}>
                 <div className={"top"}></div>
                 <div className={"bottom"}></div>
