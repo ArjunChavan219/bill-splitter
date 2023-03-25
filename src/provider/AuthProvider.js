@@ -26,7 +26,14 @@ export const AuthProvider = ({ children }) => {
     }, [user])
 
     function handlePageChange() {
-        setUser(getUserState())
+        const new_state = getUserState()
+        if (new_state.username === "") {
+            setUser({
+                username: "",
+                permissions: []
+            })
+        }
+        
     }
 
     function clearCache() {
