@@ -53,12 +53,9 @@ export const AuthProvider = ({ children }) => {
 
     const server = new Server(user, handlePageChange)
 
-    const login = (user, userGroup, token) => {
-        if (userGroup === "admin") {
-            setUser({ username: user, permissions: ["view_admin", "view_about"], userGroup: userGroup, token: token })
-        } else {
-            setUser({ username: user, permissions: ["view_about"], userGroup: userGroup, token: token })
-        }
+    const login = (user, userName, userGroup, token) => {
+        const permissions = userGroup === "admin" ? ["view_admin", "view_about"] : ["view_about"]
+        setUser({ userName: userName, username: user, permissions: permissions, userGroup: userGroup, token: token })
         navigate("/user", { replace: true })
     }
 
@@ -68,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
     const serverDown = () => {
         clearCache()
-        navigate("/down", { replace: true })
+        navigate("/", { replace: true })
     }
 
     return (
