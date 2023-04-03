@@ -13,6 +13,8 @@ function Home() {
     const [isLoading, setIsLoading] = useState(" loading")
     const [isReceiving, setIsReceiving] = useState("white")
     const [hover, setHover] = useState("")
+    const [viewPassword, setViewPassword] = useState("")
+    const [passwordType, setPasswordType] = useState("password")
     const { user, login, server } = useAuth()
     const navigate = useNavigate()
 
@@ -62,6 +64,17 @@ function Home() {
         setError("")
     }
 
+    function togglePassword() {
+        if (viewPassword === "") {
+            setViewPassword("-slash")
+            setPasswordType("text")
+        } else {
+            setViewPassword("")
+            setPasswordType("password")
+        }
+            
+    }
+
     return (
         <>
             {ifDisplay ?
@@ -72,11 +85,14 @@ function Home() {
                         <h2>Please Sign In</h2>
                         <form id="login" onSubmit={handleLogin}>
                             <input type="username" placeholder="Email" autoComplete="username" className={error === "Username" ? "error" : "normal"} onBlur={onExit}/>
-                            <input type="password" placeholder="Password" autoComplete="password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
+                            <input type={passwordType} placeholder="Password" autoComplete="password" className={error === "Password" ? "error" : "normal"} onBlur={onExit}/>
+                            
                             <button type="submit" className={"button"}>
                                 Login
                             </button>
                         </form>
+                        <i className={`fa fa-eye${viewPassword} fa-lg`} aria-hidden="true" onClick={togglePassword}
+                            style={{position: "absolute", marginLeft: "288px"}}></i>
                         <i style={{color: isReceiving, marginTop: "50px", marginBottom: "-50px"}} className="fa fa-cog fa-spin fa-3x fa-fw"></i>
 
                     </div>
