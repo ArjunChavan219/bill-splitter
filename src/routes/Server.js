@@ -3,6 +3,7 @@ import { Encrypt, Decrypt } from "../permissions/Encryption"
 const apiURL = process.env.REACT_APP_API_URL
 const cacheEndpoints = new Set(["user", "users", "bill", "bills", "user-bill", "user-bills", "all-bills", "manage-bill"])
 const expirableEndpoints = new Set(["user-bill", "user-bills", "all-bills", "manage-bill"])
+const abortTimeout = 5000
 
 function cache(cacheKey, isExpirable) {
     const cacheValue = window.localStorage?.getItem(cacheKey)
@@ -31,7 +32,8 @@ export default class Server {
 			headers: {
                 'x-access-token': this.user.token,
                 'x-access-user': this.user.username
-            }
+            },
+            signal: AbortSignal.timeout(abortTimeout)
 		}
         const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
         const cacheAble = cacheEndpoints.has(endpoint)
@@ -69,6 +71,7 @@ export default class Server {
                 'x-access-token': this.user.token,
                 'x-access-user': this.user.username
             },
+            signal: AbortSignal.timeout(abortTimeout),
 			body: JSON.stringify(body)
 		}
 		return fetch(`${this.url}/${endpoint}`, requestOptions).then(res => {
@@ -91,7 +94,7 @@ export default class Server {
     }
 
     async pingServer() {
-        return fetch(`${this.url}/ping`)
+        return fetch(`${this.url}/ping`, {signal: AbortSignal.timeout(abortTimeout)})
             .then(res => true)
             .catch(err => false)
     }
