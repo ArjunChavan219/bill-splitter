@@ -128,7 +128,7 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
             <h3>Select {typeContent} to be {type === "update-users" ? "Requested" : (add ? "Added" : "Removed")}:</h3>
             <div className={"group"} style={{width: "auto", justifyContent: "center", margin: "10px"}}>
             {loading ? <div style={{textAlign: "center"}}>
-                <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+                <i className="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
             </div> : 
                 values.map((value, itr) => {
                 return (
