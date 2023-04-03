@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom"
 
 import { useAuth } from "../../provider/AuthProvider"
 
@@ -23,17 +23,20 @@ function TextInput({ shareState, outOf, quantity }) {
     const [shareValue, setShareValue] = useState(share !== 0 ? share*total : 1)
 
     function handleChange(event) {
-        if (event.target.value < 1) {
-            event.target.value = 0
-        } else if (event.target.value > total) {
-            event.target.value = total
-        } else {
-            setShareValue(event.target.value)
-        }
+        setShareValue(event.target.value)
     }
 
     function handleExit(event) {
-        setShare(shareValue/total)
+        let finalShare
+        if (event.target.value < 1) {
+            finalShare = 1
+        } else if (event.target.value > total) {
+            finalShare = total
+        } else {
+            finalShare = shareValue
+        }
+        setShare(finalShare/total)
+        setShareValue(finalShare)
     }
 
     return (
@@ -157,14 +160,8 @@ const Bill = () => {
     const { server, serverDown } = useAuth()
     const [userItems, setUserItems] = useState([])
     const [saved, setSaved] = useState(false)
-
-    function updateItems() {
-        server.getUserBill(name).then(data => {
-            setUserItems(data.items)
-        }).catch(err => {
-            serverDown()
-        })
-    }
+    const [loading, setLoading] = useState(true)
+    const LoadingScreen = useOutletContext()
 
     function saveItems() {
         server.updateUserBill(name, userItems).then(data => {
@@ -182,12 +179,13 @@ const Bill = () => {
         })
     }
 
-    function cancel() {
-        navigate("/user", {replace: true})
-    }
-
     useEffect(() => {
-        updateItems()
+        server.getUserBill(name).then(data => {
+            setUserItems(data.items)
+            setLoading(false)
+        }).catch(err => {
+            serverDown()
+        })
     }, [])
 
     useEffect(() => {
@@ -195,7 +193,7 @@ const Bill = () => {
     }, [userItems])
 
     return (
-        <>
+        <LoadingScreen loading={loading}>
             <h2 className={"text-3xl font-semibold mb-2"}>Bill: &nbsp; {`${billName} (${billDate})`}</h2>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>
@@ -226,7 +224,7 @@ const Bill = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </LoadingScreen>
     )
 }
 

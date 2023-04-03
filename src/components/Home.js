@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { useAuth } from "../provider/AuthProvider"
+import { Gears } from "./Common"
 
 import "../styles/Home.css"
 
@@ -79,23 +80,7 @@ function Home() {
                     <h1>500</h1>
                     <h2 style={{margin: "10px 0px 0px"}}>Server is Down <b>:(</b></h2>
                     <h2 style={{margin: "0px 0px 20px"}}>Contact Admin </h2>
-                    <div className="gears">
-                        <div className="gear one">
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        </div>
-                        <div className="gear two">
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        </div>
-                        <div className="gear three">
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        <div className="bar"></div>
-                        </div>
-                    </div>
+                    <Gears />
                 </div>
             }
         </>

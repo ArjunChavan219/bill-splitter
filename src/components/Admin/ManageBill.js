@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom"
 
 import { useAuth } from "../../provider/AuthProvider"
 import { AddRemoveModal, UpdateUser } from "../Modals/Modals"
@@ -142,6 +142,8 @@ const ManageBill = () => {
     const [billItems, setBillItems] = useState([])
     const [billUsers, setBillUsers] = useState([])
     const [saved, setSaved] = useState(true)
+    const [loading, setLoading] = useState(true)
+    const LoadingScreen = useOutletContext()
 
     const billGroup = useRef("")
     const oldUsers = useRef(new Set())
@@ -214,13 +216,14 @@ const ManageBill = () => {
             setBillUsers(data.users)
             billGroup.current = data.group
             oldUsers.current = new Set(data.users)
+            setLoading(false)
         }).catch(err => {
             serverDown()
         })
     }, [])
 
     return (
-        <>
+        <LoadingScreen loading={loading}>
             <h2 className={"text-3xl font-semibold mb-2"}>Bill: &nbsp; {`${billName} (${billDate})`}</h2>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>
@@ -249,7 +252,7 @@ const ManageBill = () => {
                     </div>}
                 </div>
             </div>
-        </>
+        </LoadingScreen>
     )
 }
 

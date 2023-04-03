@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom"
 
 import { useAuth } from "../../provider/AuthProvider"
 
@@ -32,6 +32,8 @@ const BillSplit = () => {
     const billDate = name.slice(-8)
     const { server, serverDown } = useAuth()
     const [usersData, setUsersData] = useState([])
+    const [loading, setLoading] = useState(true)
+    const LoadingScreen = useOutletContext()
 
     function closePage() {
         navigate("/user/manage", {replace: true})
@@ -40,13 +42,14 @@ const BillSplit = () => {
     useEffect(() => {
         server.billSplit(name).then(data => {
             setUsersData(data.users)
+            setLoading(false)
         }).catch(err => {
             serverDown()
         })
     }, [])
 
     return (
-        <>
+        <LoadingScreen loading={loading}>
             <h2 className={"text-3xl font-semibold mb-2"}>Bill: &nbsp; {`${billName} (${billDate})`}</h2>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>
@@ -70,7 +73,7 @@ const BillSplit = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </LoadingScreen>
     )
 }
 
