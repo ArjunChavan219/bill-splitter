@@ -9,7 +9,6 @@ const logo = String(require("../../assets/blank_profile.png"))
 
 const Profile = () => {
     const { user, logout, server, serverDown } = useAuth()
-    const [userData, setUserData] = useState({})
     const menuRef = useRef(null)
 
     const logoutHandler = () => {
@@ -20,19 +19,11 @@ const Profile = () => {
         menuRef.current.removeAttribute("open")
     }
 
-    useEffect(() => {
-        server.getUserData().then(data => {
-            setUserData(data)
-        }).catch(err => {
-            serverDown()
-        })
-    }, [])
-
     return (
         <div className={"flex items-center h-20 px-6 sm:px-10 bg-white"}>
             <Link to="/user"><h1 className={"text-4xl font-semibold mb-2"}>Dashboard</h1></Link>
             <div className={"flex flex-shrink-0 items-center ml-auto"}>
-                <span className={"font-semibold"}>{userData.firstName} {userData.lastName}</span>
+                <span className={"font-semibold"}>{user.userName}</span>
                 <span className={"h-12 w-12 ml-2 sm:ml-3 mr-2 bg-gray-100 rounded-full overflow-hidden"}>
                     <img src={logo} alt="user profile photo" className={"h-full w-full object-cover"}/>
                 </span>
