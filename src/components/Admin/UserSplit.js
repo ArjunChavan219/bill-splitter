@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
 
 import { useAuth } from "../../provider/AuthProvider"
 
@@ -36,6 +36,8 @@ const UserSplit = () => {
     const navigate = useNavigate()
     const { server, serverDown } = useAuth()
     const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
+    const LoadingScreen = useOutletContext()
     
     function closePage() {
         navigate("/user", {replace: true})
@@ -44,13 +46,14 @@ const UserSplit = () => {
     useEffect(() => {
         server.allUsers().then(data => {
             setUsers(data.users)
+            setLoading(false)
         }).catch(err => {
             serverDown()
         })
     }, [])
 
     return (
-        <>
+        <LoadingScreen loading={loading}>
             <h2 className={"text-3xl font-semibold mb-2"}>All Users</h2>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>
@@ -72,7 +75,7 @@ const UserSplit = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </LoadingScreen>
     )
 }
 

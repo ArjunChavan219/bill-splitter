@@ -9,7 +9,6 @@ import Home from "../components/Home"
 import Manage from "../components/Admin/Manage"
 import ManageBill from "../components/Admin/ManageBill"
 import PageNotFound from "../components/Errors/PageNotFound"
-import ServerDown from "../components/Errors/ServerDown"
 import User from "../components/User/User"
 import UserSplit from "../components/Admin/UserSplit"
 
@@ -40,7 +39,6 @@ function RoutePath() {
                     <Route path="user-split" element={<UserSplit />} />
                 </Route>
             </Route>
-            <Route path="down" element={<ServerDown />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>
     )

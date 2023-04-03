@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useOutletContext } from "react-router-dom"
 
 import { useAuth } from "../../provider/AuthProvider"
 
@@ -35,25 +35,24 @@ const Manage = () => {
     const navigate = useNavigate()
     const { server, serverDown } = useAuth()
     const [allBills, setAllBills] = useState([])
-
-    function updateBills() {
-        server.getAllBills().then(data => {
-            setAllBills(data.bills)
-        }).catch(err => {
-            serverDown()
-        })
-    }
+    const [loading, setLoading] = useState(true)
+    const LoadingScreen = useOutletContext()
 
     function closePage() {
         navigate("/user", {replace: true})
     }
 
     useEffect(() => {
-        updateBills()
+        server.getAllBills().then(data => {
+            setAllBills(data.bills)
+            setLoading(false)
+        }).catch(err => {
+            serverDown()
+        })
     }, [])
 
     return (
-        <>
+        <LoadingScreen loading={loading}>
             <h2 className={"text-3xl font-semibold mb-2"}>All Bills</h2>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>
@@ -77,7 +76,7 @@ const Manage = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </LoadingScreen>
     )
 }
 

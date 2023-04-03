@@ -3,6 +3,7 @@ import { Encrypt, Decrypt } from "../permissions/Encryption"
 const apiURL = process.env.REACT_APP_API_URL
 const cacheEndpoints = new Set(["user", "users", "bill", "bills", "user-bill", "user-bills", "all-bills", "manage-bill"])
 const expirableEndpoints = new Set(["user-bill", "user-bills", "all-bills", "manage-bill"])
+const abortTimeout = 5000
 
 function cache(cacheKey, isExpirable) {
     const cacheValue = window.localStorage?.getItem(cacheKey)
@@ -26,12 +27,14 @@ export default class Server {
     }
 
     async getRequest(endpoint, params) {
+        const controller = new AbortController();
         const requestOptions = {
 			method: "GET",
 			headers: {
                 'x-access-token': this.user.token,
                 'x-access-user': this.user.username
-            }
+            },
+            signal: controller.signal
 		}
         const request = `${this.url}/${endpoint}${params ? `?${new URLSearchParams(params)}` : ""}`
         const cacheAble = cacheEndpoints.has(endpoint)
@@ -48,9 +51,13 @@ export default class Server {
             }
         }
 
+        const signalTimeout = setTimeout(() => {
+            controller.abort()
+        }, abortTimeout)
         return fetch(request, requestOptions).then(
 			res => res.json()
 		).then(data => {
+            clearTimeout(signalTimeout)
             if (cacheAble) {
                 window.localStorage.setItem(cacheKey, JSON.stringify({
                     ttl: 900000 + new Date().getTime(),
@@ -62,6 +69,7 @@ export default class Server {
     }
 
     async postRequest(endpoint, body) {
+        const controller = new AbortController();
         const requestOptions = {
 			method: "POST",
 			headers: {
@@ -69,9 +77,15 @@ export default class Server {
                 'x-access-token': this.user.token,
                 'x-access-user': this.user.username
             },
+            signal: controller.signal,
 			body: JSON.stringify(body)
 		}
+        const signalTimeout = setTimeout(() => {
+            controller.abort()
+        }, abortTimeout)
+
 		return fetch(`${this.url}/${endpoint}`, requestOptions).then(res => {
+            clearTimeout(signalTimeout)
             if (endpoint === "update-user-bill") {
                 window.localStorage.removeItem(`BUE-user-bill-${body.bill.replace(" ", "_")}`)
             } else {
@@ -91,8 +105,15 @@ export default class Server {
     }
 
     async pingServer() {
-        return fetch(`${this.url}/ping`)
-            .then(res => true)
+        const controller = new AbortController();
+        const signalTimeout = setTimeout(() => {
+            controller.abort()
+        }, abortTimeout)
+        return fetch(`${this.url}/ping`, {signal: controller.signal})
+            .then(res => {
+                clearTimeout(signalTimeout)
+                return true
+            })
             .catch(err => false)
     }
 

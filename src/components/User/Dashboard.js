@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { useAuth } from "../../provider/AuthProvider"
+import { useOutletContext } from "react-router-dom"
 
 import Bills from "./Bills"
 import BillsSummary from "./BillsSummary"
 import { AddRemoveModal } from "../Modals/Modals"
+import { useAuth } from "../../provider/AuthProvider"
+
 
 import "../../styles/Dashboard.css"
 
@@ -11,6 +13,8 @@ import "../../styles/Dashboard.css"
 const Dashboard = () => {
     const { server, serverDown } = useAuth()
     const [userBills, setUserBills] = useState([])
+    const [loading, setLoading] = useState(true)
+    const LoadingScreen = useOutletContext()
 
     useEffect(() => {
         document.title = "PerePro Dashboard"
@@ -20,13 +24,14 @@ const Dashboard = () => {
     function updateBills() {
         server.getUserBills().then(data => {
             setUserBills(data.bills)
+            setLoading(false)
         }).catch(err => {
             serverDown()
         })
     }
 
     return (
-        <>
+        <LoadingScreen loading={loading}>
             <BillsSummary userBills={userBills}/>
             <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
                 <div className={"p-4 flex-grow"}>
@@ -38,7 +43,7 @@ const Dashboard = () => {
                 </div>
                 
             </div>
-        </>
+        </LoadingScreen>
     )
 }
 
