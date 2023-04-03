@@ -92,7 +92,7 @@ function Home() {
                             </button>
                         </form>
                         <i className={`fa fa-eye${viewPassword} fa-lg`} aria-hidden="true" onClick={togglePassword}
-                            style={{position: "absolute", marginLeft: "288px"}}></i>
+                            style={{position: "absolute", left: "333px"}}></i>
                         <i style={{color: isReceiving, marginTop: "50px", marginBottom: "-50px"}} className="fa fa-cog fa-spin fa-3x fa-fw"></i>
 
                     </div>
