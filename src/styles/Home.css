@@ -11,12 +11,14 @@
   overflow: hidden;
   font-family: "Raleway", sans-serif;
 }
-.container:hover .top:before, .container:hover .top:after, .container:hover .bottom:before, .container:hover .bottom:after, .container:active .top:before, .container:active .top:after, .container:active .bottom:before, .container:active .bottom:after {
+
+/* Boxes GUI */
+.container_active .top:before, .container_active .top:after, .container_active .bottom:before, .container_active .bottom:after {
   margin-left: 200px;
   transform-origin: -200px 50%;
   transition-delay: 0s;
 }
-.container:hover .center, .container:active .center {
+.container_active .center {
   opacity: 1;
   transition-delay: 0.2s;
 }
@@ -55,6 +57,7 @@
   background: #3745b5;
 }
 
+/* Main Content GUI */
 .center {
   position: absolute;
   width: 400px;
@@ -115,6 +118,7 @@ h2 {
     transform: translateY(4px);
 }
 
+/* Server Down GUI */
 .serverDown h1 {
   margin: 100px auto 0 auto;
   color: black;
@@ -240,7 +244,6 @@ h2 {
   0% {
       -webkit-transform: rotate(0deg);
   }
-
   100% {
       -webkit-transform: rotate(360deg);
   }
@@ -250,7 +253,6 @@ h2 {
   0% {
       -webkit-transform: rotate(360deg);
   }
-
   100% {
       -webkit-transform: rotate(0deg);
   }
@@ -260,19 +262,15 @@ h2 {
   0% {
       -webkit-transform: rotate(0deg);
   }
-
   20% {
       -webkit-transform: rotate(30deg);
   }
-
   40% {
       -webkit-transform: rotate(25deg);
   }
-
   60% {
       -webkit-transform: rotate(30deg);
   }
-
   100% {
       -webkit-transform: rotate(0deg);
   }
@@ -282,15 +280,12 @@ h2 {
   0% {
       -webkit-transform: rotate(0deg);
   }
-
   20% {
       -webkit-transform: rotate(-30deg);
   }
-
   60% {
       -webkit-transform: rotate(-30deg);
   }
-
   100% {
       -webkit-transform: rotate(0deg);
   }
@@ -300,19 +295,15 @@ h2 {
   0% {
       -webkit-transform: rotate(0deg);
   }
-
   20% {
       -webkit-transform: rotate(-30deg);
   }
-
   40% {
       -webkit-transform: rotate(-25deg);
   }
-
   60% {
       -webkit-transform: rotate(-30deg);
   }
-
   100% {
       -webkit-transform: rotate(0deg);
   }

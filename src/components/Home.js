@@ -12,6 +12,7 @@ function Home() {
     const [ifDisplay, setIfDisplay] = useState(false)
     const [isLoading, setIsLoading] = useState(" loading")
     const [isReceiving, setIsReceiving] = useState("white")
+    const [hover, setHover] = useState("")
     const { user, login, server } = useAuth()
     const navigate = useNavigate()
 
@@ -31,6 +32,9 @@ function Home() {
             } else {
                 setIfDisplay(true)
                 document.title = "PerePro Login"
+                setTimeout(() => {
+                    setHover(" container_active")
+                }, 500)
             }
         })
         
@@ -61,7 +65,7 @@ function Home() {
     return (
         <>
             {ifDisplay ?
-                <div className={"container"} style={{maxWidth: "none"}}>
+                <div className={`container${hover}`} style={{maxWidth: "none"}}>
                     <div className={"top"}></div>
                     <div className={"bottom"}></div>
                     <div className={"center"}>
@@ -73,7 +77,7 @@ function Home() {
                                 Login
                             </button>
                         </form>
-                        <i style={{color: isReceiving, marginTop: "50px", marginBottom: "-50px"}} class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+                        <i style={{color: isReceiving, marginTop: "50px", marginBottom: "-50px"}} className="fa fa-cog fa-spin fa-3x fa-fw"></i>
 
                     </div>
                 </div> : <div className={`serverDown${isLoading}`}>
