@@ -9,6 +9,7 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
     const { server, serverDown } = useAuth()
     const [values, setValues] = useState([])
     const [valueChecked, setValueChecked] = useState([])
+    const [loading, setLoading] = useState(true)
     let billData, userValues, setUserValues;
     if (type === "bills") {
         userValues = userValueState[0]
@@ -16,6 +17,12 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
         [billData, userValues] = userValueState
     } else {
         [userValues, setUserValues, billData] = userValueState
+    }
+
+    function setFinalValues(finalValues) {
+        setValues(finalValues)
+        setValueChecked(new Array(finalValues.length).fill(false))
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -28,26 +35,22 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
             } else {
                 finalValues = userValues
             }
-            setValues(finalValues)
-            setValueChecked(new Array(finalValues.length).fill(false))
+            setFinalValues(finalValues)
         } else if (type === "bills") {
             server.getBills().then(data => {
                 finalValues = data.bills.filter(bill => !userValues.includes(bill))
-                setValues(finalValues)
-                setValueChecked(new Array(finalValues.length).fill(false))
+                setFinalValues(finalValues)
             }).catch(err => {
                 serverDown()
             })
         } else if (type === "item-users") {
             const userValueNames = userValues.map(user => user[0])
             finalValues = billData.filter(user => !userValueNames.includes(user))
-            setValues(finalValues)
-            setValueChecked(new Array(finalValues.length).fill(false))
+            setFinalValues(finalValues)
         } else if (type === "users") {
             server.getUsers(billData[0]).then(data => {
                 finalValues = data.users.filter(user => !userValues.includes(user))
-                setValues(finalValues)
-                setValueChecked(new Array(finalValues.length).fill(false))
+                setFinalValues(finalValues)
             }).catch(err => {
                 serverDown()
             })
@@ -55,8 +58,7 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
             server.getBill(billData).then(data => {
                 const userValueNames = userValues.map(item => item.name)
                 finalValues = data.items.filter(item => !userValueNames.includes(item.name))
-                setValues(finalValues)
-                setValueChecked(new Array(finalValues.length).fill(false))
+                setFinalValues(finalValues)
             }).catch(err => {
                 serverDown()
             })
@@ -125,7 +127,10 @@ const Checkbox = ({ type, updateWindow, onRequestClose, userValueState, add }) =
         <>
             <h3>Select {typeContent} to be {type === "update-users" ? "Requested" : (add ? "Added" : "Removed")}:</h3>
             <div className={"group"} style={{width: "auto", justifyContent: "center", margin: "10px"}}>
-            {values.map((value, itr) => {
+            {loading ? <div style={{textAlign: "center"}}>
+                <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+            </div> : 
+                values.map((value, itr) => {
                 return (
                     <div key={itr} style={{width: "auto"}}>
                         <input id={`cb-${itr}`} type="checkbox" checked={valueChecked[itr]} onChange={() => handleChange(itr)} />
