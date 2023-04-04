@@ -36,6 +36,7 @@ const Profile = () => {
                         <ul onClick={closeDropdown}>
                             <li><Link to="/user/manage">Bill Split</Link></li>
                             <li><Link to="/user/user-split">User Split</Link></li>
+                            <li><Link to="/user/quick-split">Quick Split</Link></li>
                         </ul>
                     </details>
                 </div>
