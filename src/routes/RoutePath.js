@@ -9,6 +9,7 @@ import Home from "../components/Home"
 import Manage from "../components/Admin/Manage"
 import ManageBill from "../components/Admin/ManageBill"
 import PageNotFound from "../components/Errors/PageNotFound"
+import QuickSplit from "../components/Admin/QuickSplit"
 import User from "../components/User/User"
 import UserSplit from "../components/Admin/UserSplit"
 
@@ -37,6 +38,7 @@ function RoutePath() {
                     <Route path="manage-bill" element={<ManageBill />} />
                     <Route path="bill-split" element={<BillSplit />} />
                     <Route path="user-split" element={<UserSplit />} />
+                    <Route path="quick-split" element={<QuickSplit />} />
                 </Route>
             </Route>
             <Route path="*" element={<PageNotFound />} />

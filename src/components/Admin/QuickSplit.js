@@ -128,30 +128,93 @@ function ItemData({ itemData, updateBill, billUsers }) {
 }
 
 
-const ManageBill = () => {
-    const location = useLocation()
-    const navigate = useNavigate()
-    if (location.state === null) {
-        return (<Unauthorized />)
+function GetItems({setAllUsers, setItems, setBill, setPage}) {
+    const [names, setNames] = useState("")
+    const [costs, setCosts] = useState("")
+    const [users, setUsers] = useState("")
+
+    function onNameBlur(event) {
+        setNames(event.target.value)
     }
-    
-    const { name } = location.state
-    const billName = name.slice(0, -9)
-    const billDate = name.slice(-8)
-    const { server, serverDown } = useAuth()
+    function onCostBlur(event) {
+        setCosts(event.target.value)
+    }
+    function onUserBlur(event) {
+        setUsers(event.target.value)
+    }
+
+    function saveData() {
+        const items = new Map();
+        const bill = [];
+        const costs_arr = costs.split("\n").map(cost => parseFloat(cost))
+        names.split("\n").forEach((name, itr) => {
+            items.set(name, costs_arr[itr])
+            bill.push({
+                name: name,
+                users: [],
+                locked: false
+            })
+        })
+        setPage("main")
+        setAllUsers(users.split("\n"))
+        setItems(items)
+        setBill(bill)
+    }
+
+    return (
+        <>
+            <div>
+                <label>Names</label><br/>
+                <textarea id="names" name="names" rows="4" cols="50" onBlur={onNameBlur}>
+                </textarea><br/><br/>
+                <label>Costs</label><br/>
+                <textarea id="costs" name="costs" rows="4" cols="50" onBlur={onCostBlur}>
+                </textarea><br/><br/>
+                <label>Users</label><br/>
+                <textarea id="users" name="users" rows="4" cols="50" onBlur={onUserBlur}>
+                </textarea><br/><br/>
+                <button onClick={saveData}>Next</button>
+            </div>
+        </>
+    )
+}
+
+function ShowOutput({billItems, items, users}) {
+    console.log(billItems);
+    console.log(items);
+    const userShares = new Map();
+    users.forEach(val => {
+        userShares.set(val, 0)
+    })
+    billItems.forEach(item => {
+        const cost = items.get(item.name)
+        item.users.forEach(user => {
+            let userShare = userShares.get(user.username)
+            userShare += user.share*cost
+            userShares.set(user.username, userShare)
+        })
+    })
+
+
+    return (
+        <>
+            <h2>Split:</h2>
+            {Array.from(userShares, (entry, itr) => {
+                return (<><label key={itr}>{`${entry[0]} -> ${entry[1].toFixed(2)}`}</label><br/></>)
+            })}
+        </>
+    )
+}
+
+
+const QuickSplit = () => {
+    const [page, setPage] = useState("input")
     const [billItems, setBillItems] = useState([])
+    const [items, setItems] = useState([])
     const [billUsers, setBillUsers] = useState([])
-    const [saved, setSaved] = useState(true)
     const [loading, setLoading] = useState(true)
+    const [saved, setSaved] = useState(true)
     const LoadingScreen = useOutletContext()
-
-    const billGroup = useRef("")
-    const oldUsers = useRef(new Set())
-
-    const activeUsers = useMemo(() => {
-        const data = billItems.reduce((a, b) => [...new Set([...a, ...b.users.map(user => user.username)])], [])
-        return data
-    }, [billItems])
 
     const isSaveable = useMemo(() => {
         return billItems.every(item => item.locked)
@@ -180,80 +243,44 @@ const ManageBill = () => {
     }
 
     function saveBill() {
-        const newUsers = new Set(activeUsers)
-        const addUsers = activeUsers.filter(user => !oldUsers.current.has(user))
-        const removeUsers = [...oldUsers.current].filter(user => !newUsers.has(user))
-        server.saveBill(name, billItems, addUsers, removeUsers).then(data => {
-            setSaved(true)
-            oldUsers.current = newUsers
-        }).catch(err => {
-            serverDown()
-        })
+        setPage("output")
     }
 
-    function closePage() {
-        navigate("/user/manage", {replace: true})
-    }
-
-    function submitBill() {
-        server.submitBill(name).then(data => {
-            navigate("/user/bill-split", {state: {name: name}, replace: true})
-        }).catch(err => {
-            serverDown()
-        })
-    }
 
     useEffect(() => {
-        server.manageBill(name).then(data => {
-            setBillItems(data.items.map(item => {
-                let totalShare = 0
-                item.users.forEach(user => {
-                    totalShare += user.share
-                })
-                item.locked = totalShare === 1
-                return item
-            }))
-            setBillUsers(data.users)
-            billGroup.current = data.group
-            oldUsers.current = new Set(data.users)
-            setLoading(false)
-        }).catch(err => {
-            serverDown()
-        })
+        setLoading(false)
     }, [])
 
     return (
         <LoadingScreen loading={loading}>
-            <h2 className={"text-3xl font-semibold mb-2"}>Bill: &nbsp; {`${billName} (${billDate})`}</h2>
-            <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
-                <div className={"p-4 flex-grow"}>
-                        <div style={{marginBottom: "10px"}}>
-                            <ul className="responsive-table">
-                                <div className="parent">
-                                    <li className="table-header">
-                                        <div className="col col-item">Item</div>
-                                        <div className="col col-status" style={{color: statusColor}}>Status</div>
-                                        <div className="col col-shares">Shares</div>
-                                    </li>
-                                </div>
-                                <div className="children">
-                                    {billItems.map((item, itr) => <ItemData key={"item"+itr} itemData={[itr, item.name, item.users]} billUsers={billUsers} updateBill={updateBill}/>)}
-                                </div>
-                            </ul>
+            {page === "input" ? <GetItems setAllUsers={setBillUsers} setItems={setItems} setBill={setBillItems} setPage={setPage}/> : (page === "output" ? <ShowOutput billItems={billItems} items={items} users={billUsers}/> : <>
+                <h2 className={"text-3xl font-semibold mb-2"}>New Bill:</h2>
+                <div className={"flex bg-white shadow rounded-lg"} style={{padding: "20px"}}>
+                    <div className={"p-4 flex-grow"}>
+                            <div style={{marginBottom: "10px"}}>
+                                <ul className="responsive-table">
+                                    <div className="parent">
+                                        <li className="table-header">
+                                            <div className="col col-item">Item</div>
+                                            <div className="col col-status" style={{color: statusColor}}>Status</div>
+                                            <div className="col col-shares">Shares</div>
+                                        </li>
+                                    </div>
+                                    <div className="children">
+                                        {billItems.map((item, itr) => <ItemData key={"item"+itr} itemData={[itr, item.name, item.users]} billUsers={billUsers} updateBill={updateBill}/>)}
+                                    </div>
+                                </ul>
+                            </div>
+                        <div className="btnDiv">
+                            {!saved && <button onClick={saveBill} className={`manage-button save-button`}><span>Save</span></button>}
                         </div>
-                    <div className="btnDiv">
-                        <AddRemoveModal user={[billUsers, setBillUsers, [billGroup.current, activeUsers]]} type={"users"} add={true} />
-                        {!saved && <button onClick={saveBill} className={`manage-button save-button`}><span>Save</span></button>}
-                        <AddRemoveModal user={[billUsers, setBillUsers, [billGroup.current, activeUsers]]} type={"users"} add={false}/>
                     </div>
-                    {saved && <div className="btnDiv">
-                        <UpdateUser closePage={closePage} userState={[name, billUsers]}/>
-                        <button onClick={submitBill} className={`manage-button submit-button`} style={{marginLeft: "5%"}} disabled={!isSaveable}><span>Submit</span></button>
-                    </div>}
                 </div>
-            </div>
+            </>)}
         </LoadingScreen>
     )
 }
 
-export default ManageBill
+
+
+export default QuickSplit
